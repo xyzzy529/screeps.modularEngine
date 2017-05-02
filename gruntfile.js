@@ -119,7 +119,7 @@ module.exports = function(grunt) {
             }
         }
     });
-    
+
     grunt.registerTask('switch-to-pack-deploy', function () {
         grunt.config.set('screeps.dist.src', ['pack/main.js']);
     });
@@ -146,21 +146,21 @@ module.exports = function(grunt) {
         }
     });
     // clean deployment (dry run)
-    grunt.registerTask('default', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'deploymentnumber']);
+    grunt.registerTask('default', ['clean', 'copy:src', 'deploymentnumber']);
     // clean deployment
-    grunt.registerTask('deploy', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'deploymentnumber', 'screeps']);
+    grunt.registerTask('deploy', ['clean', 'copy:src', 'deploymentnumber', 'screeps']);
     // clean deployment to directory
-    grunt.registerTask('publish', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'deploymentnumber', 'copy:publish']);
+    grunt.registerTask('publish', ['clean', 'copy:src', 'deploymentnumber', 'copy:publish']);
     // clean deployment (public only)
-    grunt.registerTask('public-deploy', ['clean', 'copy:public', 'deploymentnumber', 'screeps']);
+    grunt.registerTask('public-deploy', ['clean', 'copy:src', 'deploymentnumber', 'screeps']);
     // single file [experimental] (dry run)
-    grunt.registerTask('compress', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'webpack']);
+    grunt.registerTask('compress', ['clean', 'copy:src', 'webpack']);
     // single file [experimental]
-    grunt.registerTask('compress-deploy', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'deploymentnumber', 'webpack', 'switch-to-pack-deploy','screeps']);
+    grunt.registerTask('compress-deploy', ['clean', 'copy:src', 'deploymentnumber', 'webpack', 'switch-to-pack-deploy','screeps']);
     // uglified [experimental] (dry run)
-    grunt.registerTask('ugly', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'webpack', 'uglify']);
+    grunt.registerTask('ugly', ['clean', 'copy:src', 'webpack', 'uglify']);
     // uglified [experimental]
-    grunt.registerTask('ugly-deploy', ['clean', 'copy:public', 'copy:internal', 'copy:overrides', 'deploymentnumber', 'webpack', 'uglify', 'switch-to-pack-deploy', 'screeps']);
+    grunt.registerTask('ugly-deploy', ['clean', 'copy:src', 'deploymentnumber', 'webpack', 'uglify', 'switch-to-pack-deploy', 'screeps']);
     grunt.registerTask('reintegrate', 'Create a new integration branch with branches configured from reintegrate.json', function(targetBranch, targetOption) {
         const options = this.options();
         if (Object.getOwnPropertyNames(options).length === 0) {

@@ -14,7 +14,7 @@ const KEEP_OVERRIDEN_BASE_FUNCTION = false;
 const ENABLE_PROFILER = false;
 const BAD_NODE_CPU = 6;
 
-const profiler = require('profiler');
+const profiler = require('engine.profiler');
 
 const phase = {
     flush(elem){
@@ -49,19 +49,19 @@ const Feature = function(name){
         this.files[file] = require(`features.${this.name}.${file}`);
     };
     this.flush = function(){
-        this.files.forEach(phase.flush);
+        _.forEach(this.files, phase.flush);
     };
     this.register = function(){
-        this.files.forEach(phase.register);
+        _.forEach(this.files, phase.register);
     };
     this.analyze = function(){
-        this.files.forEach(phase.analyze);
+        _.forEach(this.files, phase.analyze);
     };
     this.execute = function(){
-        this.files.forEach(phase.execute);
+        _.forEach(this.files, phase.execute);
     };
     this.cleanup = function(){
-        this.files.forEach(phase.cleanup);
+        _.forEach(this.files, phase.cleanup);
     };
     this.saveMemory = function(){
         if( this.requiresMemory === true ){
@@ -125,13 +125,19 @@ const system = {
             if( systemSegment != null && systemSegment.length !== 0 ) global.system = JSON.parse(systemSegment);
             isNewDeployment = global.system == null || global.system.version !== mod.DEPLOYMENT;
 
+            if(isNewDeployment){
+                if( global.system == null ) global.system = {};
+                global.system.version = mod.DEPLOYMENT;
+                global.sysMemUpdate = true;
+            }
+
             this.basics();
             global.feature = {};
-            mod.features.forEach(installFeature);
+            mod.features.forEach(this.installFeature);
             global.installedVersion = mod.DEPLOYMENT;
         }
 
-        if( isNewDeployment ) console.log(`<span style="color:green;font-weight:bold">v ${mod.DEPLOYMENT} arrived!</span>`);
+        if( isNewDeployment ) console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
 
         // setup memory
         _.invoke(global.feature, 'initMemory');
@@ -142,27 +148,29 @@ const system = {
     shutdown(){
         // execute buffered command        
         const command = RawMemory.segments[2];
-        if(command == null || command === '') return;
-        try{
-            console.log('Executing buffered command<br>', command);
-            console.log(eval(command));
-        }catch(e){
-            console.log(e);
+        if(command != null && command !== '') {
+            try{
+                console.log('Executing buffered command<br>', command);
+                console.log(eval(command));
+            }catch(e){
+                console.log(e);
+            }
+            RawMemory.segments[2] = '';
         }
-        RawMemory.segments[2] = '';
 
         _.invoke(global.feature, 'saveMemory');
 
-        if( global.moduleSegmentUpdate === true ) {
+        if( global.sysMemUpdate === true ) {
             if( global.system == null ) RawMemory.segments[0] = '';
             else RawMemory.segments[0] = JSON.stringify(global.system);
+            global.sysMemUpdate = false;
         }
         if( ENABLE_PROFILER ) profiler.save();
     },
     installFeature(name){
         let featureIndex;
         try{
-            featureIndex = require(`features.${name}.index.js`);
+            featureIndex = require(`features.${name}.index`);
         } catch(e) {
             if( e.message && e.message.indexOf('Unknown module') > -1 ){
                 console.log(`Unable to find feature index file for "${name}"!`);
