@@ -1,0 +1,8 @@
+{
+    "branch": "default",
+    "email": "<mail>",
+    "password": "<password>",
+    "ptr": false, 
+    "publishDir": "pub/", 
+    "deployment": 0
+}
