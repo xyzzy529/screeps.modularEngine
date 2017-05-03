@@ -1,5 +1,6 @@
 ### Project specific
 screeps.json
+src/main.js
 dist/
 pack/
 pub/
