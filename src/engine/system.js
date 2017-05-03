@@ -11,53 +11,37 @@ module.exports = mod;
 const profiler = require('engine.profiler');
 const memory = require('engine.memory');
 
-const phase = {
-    flush(elem){
-        if(elem.flush !== undefined) elem.flush();
-    },
-    register(elem){
-        if(elem.register !== undefined) elem.register();
-    },
-    analyze(elem){
-        if(elem.analyze !== undefined) elem.analyze();
-    },
-    execute(elem){
-        if(elem.execute !== undefined) elem.execute();
-    },
-    cleanup(elem){
-        if(elem.cleanup !== undefined) elem.cleanup();
-    },
-};
-
 const Feature = function(name){
+    let that = this;
     this.name = name;
     this.files = {};
     this.requiresMemory = false;
     this.memory = null;
     this.logScopes = null;
+    this.setContext = function(){
+        global.context = that;
+    };
+    this.releaseContext = function(){
+        global.context = null;
+    };
     this.load = function(file){
         this.files[file] = require(`features.${this.name}.${file}`);
     };
-    this.flush = function(){
-        global.currentContext = this;
-        _.forEach(this.files, phase.flush);
-    };
-    this.register = function(){
-        global.currentContext = this;
-        _.forEach(this.files, phase.register);
-    };
-    this.analyze = function(){
-        global.currentContext = this;
-        _.forEach(this.files, phase.analyze);
-    };
-    this.execute = function(){
-        global.currentContext = this;
-        _.forEach(this.files, phase.execute);
-    };
-    this.cleanup = function(){
-        global.currentContext = this;
-        _.forEach(this.files, phase.cleanup);
-    };
+    this.flush = new LiteEvent(false);
+    this.flush.preCall = this.setContext;
+    this.flush.postCall = this.releaseContext;
+    this.register = new LiteEvent(false);
+    this.register.preCall = this.setContext;
+    this.flush.postCall = this.releaseContext;
+    this.analyze = new LiteEvent(false);
+    this.analyze.preCall = this.setContext;
+    this.flush.postCall = this.releaseContext;
+    this.execute = new LiteEvent(false);
+    this.execute.preCall = this.setContext;
+    this.flush.postCall = this.releaseContext;
+    this.cleanup = new LiteEvent(false);
+    this.cleanup.preCall = this.setContext;
+    this.flush.postCall = this.releaseContext;
     this.initMemory = function(){
         if( this.requiresMemory === true ){
             this.memory = memory.get(name);
@@ -156,6 +140,10 @@ const globalExtend = {
         this.handlers = [];
         // collected calls
         this.triggers = [];
+        // additional routine before calling handlers
+        this.preCall = null;
+        // additional routine after calling handlers
+        this.postCall = null;
         // register a new subscriber
         this.on = function(handler) {
             this.handlers.push(handler);
@@ -170,12 +158,14 @@ const globalExtend = {
             else this.call(data);
         };
         this.call = function(data){
+            if( this.preCall != null ) this.preCall();
             try{
                 if( data === 'nullEvent' ) data = null;
                 this.handlers.slice(0).forEach(h => h(data));
             } catch(e){
                 console.log(`Error in LiteEvent.trigger ${data}`, e);
             }
+            if( this.postCall != null ) this.postCall();
         };
         this.release = function(collectAgain = false){
             collect = collectAgain;
@@ -192,8 +182,8 @@ const globalExtend = {
         options.scope = options.scope || 'none';
         options.severity = options.severity || 'none';
         let logConfig = LOG_SCOPE[options.scope] || LOG_SCOPE.none;
-        if( global.currentContext && global.currentContext.logScopes && global.currentContext.logScopes[options.scope] )
-            _.assign(logConfig, global.currentContext.logScopes[options.scope]);
+        if( global.context && global.context.logScopes && global.context.logScopes[options.scope] )
+            _.assign(logConfig, global.context.logScopes[options.scope]);
         let configSeverityValue = SEVERITY[logConfig.severity] || 5;
         let severityValue = SEVERITY[options.severity] || 0;
         if( severityValue <= configSeverityValue ){
@@ -303,6 +293,7 @@ const system = {
         }
         if( featureIndex != null && featureIndex.install != null ){
             const feature = new Feature(name);
+            feature.setContext();
             try{
                 featureIndex.install(feature);
                 global.feature[name] = feature;
@@ -322,12 +313,12 @@ mod.run = function(enableProfiler = false){
     if( enableProfiler ) profiler.enable();
     profiler.wrap(function() {
         system.bootstrap(enableProfiler);
-        _.forEach(global.feature, phase.flush);
-        _.forEach(global.feature, phase.register);
-        _.forEach(global.feature, phase.analyze);
-        _.forEach(global.feature, phase.execute);
-        _.forEach(global.feature, phase.cleanup);
-        global.currentContext = null;
+        _.forEach(global.feature, f => f.flush.trigger());
+        _.forEach(global.feature, f => f.register.trigger());
+        _.forEach(global.feature, f => f.analyze.trigger());
+        _.forEach(global.feature, f => f.execute.trigger());
+        _.forEach(global.feature, f => f.cleanup.trigger());
+        global.context = null;
         system.shutdown(enableProfiler);
     });
 };

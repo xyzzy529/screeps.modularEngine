@@ -2,17 +2,18 @@
 let mod = {};
 module.exports = mod;
 
-mod.execute = function(){
-    let memory = global.currentContext.memory;
-    let tick = 0;
-    if( memory ) {
-        tick = memory.getObject('tick', false);
-        if( tick == null ) tick = 0;
-        else tick++;
-        memory.setObject('tick', tick);
-    }
+function analyze(){
+    let tick = context.memory.getObject('tick', false); // omitting the second property will create tick = {} if tick not found. setting false returns null instead.
+    if( tick == null ) tick = 0;
+    else tick++;
+    context.memory.setObject('tick', tick);
+}
+function run(){
     log('Hello World!', {
         scope: 'core', 
         severity: 'verbose'
-    }, tick);
-};
+    }, context.memory.getObject('tick'));
+}
+
+context.analyze.on(analyze);
+context.execute.on(run);
