@@ -1,6 +1,8 @@
-const SPLITTER = '³';
+
 let mod = {};
 module.exports = mod;
+
+const SPLITTER = '³';
 
 let rawPartitions = [];
 global.partition = {};

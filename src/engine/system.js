@@ -1,17 +1,15 @@
 
-// TODO: Create global status object (bucket level, bad node...)
+let mod = {};
+module.exports = mod;
 
 // installer.inject keeps overridden functions in module.baseOf['<namespace>']['<functionName>']
 const KEEP_OVERRIDEN_BASE_FUNCTION = false;
 const BAD_NODE_CPU = 6;
 
-let mod = {};
-module.exports = mod;
-
 const profiler = require('engine.profiler');
 const memory = require('engine.memory');
 
-const Feature = function(name){
+function Feature(name){
     let that = this;
     this.name = name;
     this.files = {};
@@ -48,13 +46,13 @@ const Feature = function(name){
         }
     };
     this.saveMemory = function(){
-        if( this.requiresMemory === true && feature.memory != null && feature.memory.changed === true ){
+        if( this.requiresMemory === true && this.memory != null && this.memory.changed === true ){
             memory.set(name);
         }
     };
 };
 
-const globalExtend = {
+const globalExtension = {
     CRAYON: {
         error: '#e79da7',
         warning: { color: 'yellow', 'font-weight': 'bold' },
@@ -217,16 +215,18 @@ const globalExtend = {
             }
         }
     }
-}
+};
 
 const system = {
     bootstrap(enableProfiler){
+        global.state = {};
         const startCpu = Game.cpu.getUsed();
-        const isBadNode = startCpu > BAD_NODE_CPU;
-        const isNewServer = global.cacheTime !== (Game.time-1) || global.lastServerSwitch === undefined;
+        global.state.isBadNode = startCpu > BAD_NODE_CPU;
+        global.state.isNewNode = global.cacheTime !== (Game.time-1) || global.lastNodeSwitch === undefined;
+        global.state.bucketLevel = Game.cpu.bucket / 10000;
         const requiresInstall = global.installedVersion !== mod.DEPLOYMENT;
         global.cacheTime = Game.time;
-        if( isNewServer ) global.lastServerSwitch = Game.time;
+        if( global.state.isNewNode ) global.lastNodeSwitch = Game.time;
         let isNewDeployment = false;
 
         // load modules
@@ -241,13 +241,13 @@ const system = {
                 global.sysMemUpdate = true;
             }
 
-            _.assign(global, globalExtend);
+            _.assign(global, globalExtension);
             global.feature = {};
             mod.features.forEach(this.installFeature);
             global.installedVersion = mod.DEPLOYMENT;
-        }
 
-        if( isNewDeployment ) console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
+            if( isNewDeployment ) console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
+        }
 
         // setup memory
         memory.init();
@@ -295,20 +295,23 @@ const system = {
             const feature = new Feature(name);
             feature.setContext();
             try{
-                featureIndex.install(feature);
+                featureIndex.install();
                 global.feature[name] = feature;
             }catch(e) {
                 console.log(`Error installing feature "${name}"!<br/>${e.toString()}`);
             }
+            feature.releaseContext();
         }
     }
 };
 
 mod.features = [];
+// DEPLOYMENT will be set during grunt deployment in /dist only
+mod.DEPLOYMENT = 0;
+
 mod.registerFeature = function(name){
     mod.features.push(name);
 };
-mod.DEPLOYMENT = 0;
 mod.run = function(enableProfiler = false){
     if( enableProfiler ) profiler.enable();
     profiler.wrap(function() {
@@ -316,7 +319,15 @@ mod.run = function(enableProfiler = false){
         _.forEach(global.feature, f => f.flush.trigger());
         _.forEach(global.feature, f => f.register.trigger());
         _.forEach(global.feature, f => f.analyze.trigger());
-        _.forEach(global.feature, f => f.execute.trigger());
+        let limit = global.state.isBadNode ? 0.8 : 0.3;
+        if( global.state.bucketLevel > limit )
+            _.forEach(global.feature, f => f.execute.trigger());
+        else{
+            log('Skipping execution phase!', {
+                scope: 'core', 
+                severity: 'warning'
+            }, global.state);
+        }
         _.forEach(global.feature, f => f.cleanup.trigger());
         global.context = null;
         system.shutdown(enableProfiler);
