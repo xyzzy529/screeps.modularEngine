@@ -235,7 +235,7 @@ const system = {
             if( systemSegment != null && systemSegment.length !== 0 ) global.system = JSON.parse(systemSegment);
             isNewDeployment = global.system == null || global.system.version !== mod.DEPLOYMENT;
 
-            if(isNewDeployment){
+            if( isNewDeployment ){
                 if( global.system == null ) global.system = {};
                 global.system.version = mod.DEPLOYMENT;
                 global.sysMemUpdate = true;
@@ -252,12 +252,12 @@ const system = {
         // setup memory
         memory.init();
         _.invoke(global.feature, 'initMemory');
-        let active = [0,2]; // 0 = modules, 1 = profiler, 2 = commandBuffer
+        let active = [0,2]; // 0 = system, 1 = profiler, 2 = commandBuffer
         if( enableProfiler ) active.push(1);
         RawMemory.setActiveSegments(active); 
     },
     shutdown(enableProfiler){
-        // execute buffered command        
+        // execute buffered command
         const command = RawMemory.segments[2];
         if(command != null && command !== '') {
             try{
