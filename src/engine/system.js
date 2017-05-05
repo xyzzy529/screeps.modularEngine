@@ -25,21 +25,39 @@ function Feature(name){
     this.load = function(file){
         this.files[file] = require(`features.${this.name}.${file}`);
     };
+    this.inject = function(base, alien) {
+        let keys = _.keys(alien);
+        for (const key of keys) {
+            if (typeof alien[key] === "function") {
+                /*
+                if( namespace ){
+                    let original = base[key];
+                    if( !base.baseOf ) base.baseOf = {};
+                    if( !base.baseOf[this.name] ) base.baseOf[this.name] = {};
+                    if( !base.baseOf[this.name][key] ) base.baseOf[this.name][key] = original;
+                }
+                */
+                base[key] = alien[key].bind(base);
+            } else {
+                base[key] = alien[key];
+            }
+        }
+    };
     this.flush = new LiteEvent(false);
     this.flush.preCall = this.setContext;
     this.flush.postCall = this.releaseContext;
     this.register = new LiteEvent(false);
     this.register.preCall = this.setContext;
-    this.flush.postCall = this.releaseContext;
+    this.register.postCall = this.releaseContext;
     this.analyze = new LiteEvent(false);
     this.analyze.preCall = this.setContext;
-    this.flush.postCall = this.releaseContext;
+    this.analyze.postCall = this.releaseContext;
     this.execute = new LiteEvent(false);
     this.execute.preCall = this.setContext;
-    this.flush.postCall = this.releaseContext;
+    this.execute.postCall = this.releaseContext;
     this.cleanup = new LiteEvent(false);
     this.cleanup.preCall = this.setContext;
-    this.flush.postCall = this.releaseContext;
+    this.cleanup.postCall = this.releaseContext;
     this.initMemory = function(){
         if( this.requiresMemory === true ){
             this.memory = memory.get(name);
