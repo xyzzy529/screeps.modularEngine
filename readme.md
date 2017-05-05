@@ -41,7 +41,7 @@ Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it o
 
 ### Usage
 
-1. Commands
+Commands
   * to build (without deployment)  
   `grunt`  
   * to build & deploy  
