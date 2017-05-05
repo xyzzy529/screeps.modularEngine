@@ -1,54 +1,56 @@
-const SPLITTER = '³';
+
 let mod = {};
 module.exports = mod;
-mod.deserialize = function(rawSegment){
-    try{
-        if( rawSegment != null && rawSegment.length !== 0 ) {
-            /*
-            return {
-                name: rawSegment.substr(0,10).trim(), 
-                tick: rawSegment.substr(10,10).trim(), 
-                data: rawSegment.length > 20 ? JSON.parse(rawSegment.substr(20)) : {}
-            }
-            */
-            return rawSegment.length > 20 ? JSON.parse(rawSegment.substr(20)) : {};
-        }
-    }
-    catch(e){
-        log(`Error deserializing memory part!`, {
-            severity: 'error', 
+
+const SPLITTER = '³';
+
+let rawPartitions = [];
+global.partition = {};
+let allNames = [];
+let used = [];
+
+function initialize(raw, index) {
+    const name = raw.substr(0,10).trim();
+    if( name === '' ) return;
+    allNames.push(name);
+    const persistedTick = parseInt(raw.substr(10,10));
+
+    if( global.partition[name] == null || global.partition[name].tick != persistedTick ){
+        log(`Loading memory partition ${name}!`, {
+            severity: 'verbose', 
             scope: 'Memory'
-        }, e);
+        });
+        global.partition[name] = new Partition(index, name, persistedTick, raw.length);
+    } // else keep existing instance
+    else {
+        global.partition[name].index = index;
     }
-    return null;
+    return name;
 };
-mod.serialize = function(segment){
-    let serialized = null;
-    try{
-        const name = (segment.name + '          ').substr(0, 10);
-        const tick = ('000000000' + segment.tick.toString()).slice(-10);
-        const serializedData = JSON.stringify(segment.data);
-        serialized = name + tick + serializedData;
-    }
-    catch(e){
-        log(`Error serializing memory segment ${name}!`, {
-            severity: 'error', 
-            scope: 'Memory', 
-        }, e);
-    }
-    return serialized;
+
+function newPartition(name){
+    log(`Setting up new memory partition ${name}!`, {
+        severity: 'information', 
+        scope: 'Memory', 
+    });
+    const index = rawPartitions.length;
+    rawPartitions.push('{}');
+    global.partition[name] = new Partition(index, name, Game.time, 0);
+    global.partition[name].changed = true;
+    return global.partition[name];
 };
-function Segment(index, name, tick, rawSegment) {
+
+function Partition(index, name, tick, size) {
     this.index = index;
     this.name = name;
     this.tick = tick;
-    this.size = rawSegment.length;
+    this.size = size;
     this.changed = false;
     let _loaded = false;
     let _data = null;
 
     function load(){
-        let deserialized = mod.deserialize(rawSegment);
+        let deserialized = mod.deserialize(rawPartitions[index]);
         if( deserialized === null )
             _data = {};
         else 
@@ -87,75 +89,96 @@ function Segment(index, name, tick, rawSegment) {
         this.changed = true;
     };
 };
-function initSegment(rawSegment, index) {
-    const name = rawSegment.substr(0,10).trim();
-    if( name === '' ) return;
-    const persistedTick = parseInt(rawSegment.substr(10,10));
 
-    if( global.segments[name] == null || global.segments[name].tick != persistedTick ){
-        log(`Loading memory segment ${name}!`, {
-            severity: 'verbose', 
-            scope: 'Memory'
-        });
-        global.segments[name] = new Segment(index, name, persistedTick, rawSegment);
-    } // else keep existing memory instance
-    else {
-        global.segments[name].index = index;
-        /*
-        log(`Reusing cached memory segment ${name}!`, {
-            severity: 'information', 
-            scope: 'Memory'
-        }, {
-            "reusage ticks": Game.time - persistedTick
-        });*/
-    }
-    return name;
-};
-mod.saveSegment = function(segment) {
-    if( segment.changed === true ){
-        log(`Saving memory segment ${segment.name}!`, {
-            severity: 'verbose', 
-            scope: 'Memory', 
-        }, {
-            size: segment.size
-        });
-        segment.tick = Game.time;
-        const raw = mod.serialize(segment);
-        global.rawSegments[segment.index] = raw;
-        segment.size = raw.length;
-        segment.changed = false;
-    }
-};
-mod.setup = function(name){
-    if( global.segments[name] === undefined ){
-        log(`Setting up new memory segment ${name}!`, {
-            severity: 'information', 
-            scope: 'Memory', 
-        });
-        const index = global.rawSegments.length;
-        global.segments[name] = new Segment(index, name, Game.time, name);
-        global.segments[name].changed = true;
-    }
-};
-mod.init = function(names){
-    const raw = Memory.raw || '';
-    global.rawSegments = raw.split(SPLITTER);
-    if( global.segments == null ) global.segments = {};
-    const initializer = (rawSegment, index) => {
-        let name = initSegment(rawSegment, index);
-        if(!names.includes(name)){
-            // delete rawSegment
-            global.rawSegments.splice(index,1);
-            log(`Removing memory segment ${name}!`, {
+function cleanUp(name){
+    if(used.includes(name) === false){
+        // delete partition
+        let partition = global.partition[name];
+        if( partition != null ){
+            log(`Removing memory partition ${name}!`, {
                 severity: 'information', 
                 scope: 'Memory', 
             });
+            rawPartitions.splice(partition.index,1);
+            delete global.partition[name];
         }
-    };
-    global.rawSegments.forEach(initializer);
-    names.forEach(mod.setup);
+    }
+}
+
+mod.deserialize = function(raw){
+    try{
+        if( raw != null && raw.length !== 0 ) {
+            /*
+            return {
+                name: rawSegment.substr(0,10).trim(), 
+                tick: rawSegment.substr(10,10).trim(), 
+                data: rawSegment.length > 20 ? JSON.parse(rawSegment.substr(20)) : {}
+            }
+            */
+            return raw.length > 20 ? JSON.parse(raw.substr(20)) : {};
+        }
+    }
+    catch(e){
+        log(`Error deserializing memory partition!`, {
+            severity: 'error', 
+            scope: 'Memory'
+        }, e);
+    }
+    return null;
 };
+
+mod.serialize = function(partition){
+    let serialized = null;
+    try{
+        const name = (partition.name + '          ').substr(0, 10);
+        const tick = ('000000000' + partition.tick.toString()).slice(-10);
+        const serializedData = JSON.stringify(partition.data);
+        serialized = name + tick + serializedData;
+    }
+    catch(e){
+        log(`Error serializing memory partition ${name}!`, {
+            severity: 'error', 
+            scope: 'Memory', 
+        }, e);
+    }
+    return serialized;
+};
+
+mod.get = function(name){
+    let partition = global.partition[name] || newPartition(name);
+    used.push(name);
+    return partition;
+};
+
+mod.set = function(name){
+    let partition = global.partition[name];
+    if( partition != null && partition.changed === true ){
+        log(`Saving memory partition ${partition.name}!`, {
+            severity: 'verbose', 
+            scope: 'Memory', 
+        }, {
+            size: partition.size
+        });
+        partition.tick = Game.time;
+        rawPartitions[partition.index] = mod.serialize(partition);
+        partition.size = rawPartitions[partition.index].length;
+        partition.changed = false;
+    }
+};
+
+mod.init = function(){
+    allNames = [];
+    used = [];
+    rawPartitions = RawMemory.get().split(SPLITTER);
+    rawPartitions.forEach(initialize);
+};
+
 mod.save = function(){
-    _.forEach(global.segments, mod.saveSegment);
-    Memory.raw = global.rawSegments.join(SPLITTER);
+    used.forEach(mod.set);
+    allNames.forEach(cleanUp);
+
+    if( used.length === 0 ) RawMemory.set(' ');
+    else {
+        RawMemory.set(rawPartitions.join(SPLITTER));
+    }
 };
