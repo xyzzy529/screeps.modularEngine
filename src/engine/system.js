@@ -16,6 +16,8 @@ function Feature(name){
     this.requiresMemory = false;
     this.memory = null;
     this.logScopes = null;
+    // additional partitions
+    this.memoryPartitions = [];
     this.setContext = function(){
         global.context = that;
     };
@@ -24,8 +26,10 @@ function Feature(name){
     };
     this.load = function(file){
         this.files[file] = require(`features.${this.name}.${file}`);
+        return this.files[file];
     };
-    this.inject = function(base, alien) {
+    this.inject = function(base, file) {
+        let alien = require(`features.${this.name}.${file}`);
         let keys = _.keys(alien);
         for (const key of keys) {
             if (typeof alien[key] === "function") {
@@ -41,6 +45,9 @@ function Feature(name){
             } else {
                 base[key] = alien[key];
             }
+        }
+        if( alien.extend !== undefined && typeof alien.extend === "function" ){
+            base.extend();
         }
     };
     this.flush = new LiteEvent(false);
@@ -62,11 +69,13 @@ function Feature(name){
         if( this.requiresMemory === true ){
             this.memory = memory.get(name);
         }
+        this.memoryPartitions.forEach(m => memory.get(m));
     };
     this.saveMemory = function(){
-        if( this.requiresMemory === true && this.memory != null && this.memory.changed === true ){
+        if( this.requiresMemory === true ){
             memory.set(name);
-        }
+        }        
+        this.memoryPartitions.forEach(m => memory.set(m));
     };
 };
 
@@ -241,7 +250,7 @@ const system = {
         const startCpu = Game.cpu.getUsed();
         global.state.isBadNode = startCpu > BAD_NODE_CPU;
         global.state.isNewNode = global.cacheTime !== (Game.time-1) || global.lastNodeSwitch === undefined;
-        global.state.bucketLevel = Game.cpu.bucket / 10000;
+        global.state.bucketLevel = Game.cpu.bucket == null ? 1 : Game.cpu.bucket / 10000;
         const requiresInstall = global.installedVersion !== mod.DEPLOYMENT;
         global.cacheTime = Game.time;
         if( global.state.isNewNode ) global.lastNodeSwitch = Game.time;

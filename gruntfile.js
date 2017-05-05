@@ -49,7 +49,7 @@ module.exports = function(grunt) {
                 files: [{
                     expand: true,
                     cwd: 'src/',
-                    src: '**',
+                    src: ['**', '!example.main.js'],
                     dest: 'dist/',
                     filter: 'isFile',
                     rename: function (dest, src) {

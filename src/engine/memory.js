@@ -12,7 +12,7 @@ let used = [];
 function trimName(name){
     if( name != null && name.length > 10 ) return name.substr(0, 10);
     return name;
-}
+};
 
 function initialize(raw, index) {
     const name = raw.substr(0,10).trim();
