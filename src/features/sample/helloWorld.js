@@ -5,11 +5,14 @@
 let mod = {};
 module.exports = mod;
 
+// copy locally to have at hand for later calls (from different feature context) (not required for this example...)
+const INITIAL_COUNTER = context.settings.INITIAL_COUNTER;
+
 function initialize(){
     // access feature memory using context.memory.getObject(key, createIfNull=true) 
     // omitting the second argument or setting to true will create an empty object {}, if 'key' is not found. setting false returns null instead.
     let tick = context.memory.getObject('tick', false); 
-    if( tick == null ) tick = context.settings.INITIAL_COUNTER;
+    if( tick == null ) tick = INITIAL_COUNTER;
     else tick++;
     // you need to call setObject to write back. 
     context.memory.setObject('tick', tick);
@@ -22,7 +25,7 @@ function execute(){
         // param 2: Classification (scope & severity). Logging can be configured to show / don't show messages, regarding these values...
         // param 3: additional data to show below message. may be an object.
         log('Hello World!', {
-            scope: 'core', 
+            scope: 'census', 
             severity: 'verbose'
         }, context.memory.getObject('tick'));
     }

@@ -6,7 +6,8 @@ module.exports = mod;
 const KEEP_OVERRIDEN_BASE_FUNCTION = false;
 // allow to run features with missing dependencies
 const TRY_RUN_MISSING_DEPENDENCIES = true;
-const BAD_NODE_CPU = 6;
+// consider curent node bad when profiler wrap takes more than this amount of cpu
+const BAD_NODE_CPU = 5;
 
 const profiler = require('engine.profiler');
 const memory = require('engine.memory');
@@ -122,7 +123,7 @@ const globalExtension = {
         remoteMining: {severity: 'information', promptSign: '#006400'}, // dark green
         CreepAction: {severity: 'information', promptSign: '#fff'}, // white
         Memory: {severity: 'information', promptSign: 'firebrick'}, // red
-    },        
+    },
     isObj: function(val){
         if (val === null) { return false;}
         return ( (typeof val === 'function') || (typeof val === 'object') );

@@ -8,5 +8,6 @@ module.exports.loop = function () {
         // optionally set feature parameters
         INITIAL_COUNTER: 500
     });
+    // call engine.run(true) to enable profiler
     engine.run();
 };

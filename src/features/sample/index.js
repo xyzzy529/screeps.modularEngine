@@ -19,9 +19,9 @@ mod.install = function(){
     context.defaultValue('INITIAL_COUNTER', 0);
 
     // context log scopes will be merged (only when logging from within the feature) with global log scope configuration
-    // in this sample we are extending logging severity for 'core' log-context to 'verbose' (global is set to 'information')
+    // in this sample we are extending logging severity for 'census' log-context to 'verbose' (global is set to 'warning')
     context.logScopes = {
-        core: {severity: 'verbose'}
+        census: {severity: 'verbose'}
     };
     // load hello world sample feature module
     context.load('helloWorld');
