@@ -188,7 +188,10 @@ const globalExtension = {
                 if( data === 'nullEvent' ) data = null;
                 this.handlers.slice(0).forEach(h => h(data));
             } catch(e){
-                console.log(`Error in LiteEvent.trigger ${data}`, e);
+                log('Error in LiteEvent.trigger!', {
+                    scope: 'core', 
+                    severity: 'error'
+                }, e);
             }
             if( this.postCall != null ) this.postCall();
         };

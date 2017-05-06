@@ -16,7 +16,7 @@ To "use" a feature, you need to register it in your individual main.js (see exam
 
 There is a sample feature included in this repository to explain how features work (and I'm already working on real some, in separate repos). 
 
-Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
+Please feel free to [drop me a line](mailto:git@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
 
 ### Installation
 
@@ -38,6 +38,10 @@ Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it o
 
 5. Create a screeps.json file (copy example.screeps.json) & enter screeps account login data  
   `cp example.screeps.json screeps.json`
+  
+6. Create a main.js file (copy example.main.js)
+  `cd src`  
+  `cp example.main.js main.js`
 
 ### Usage
 
