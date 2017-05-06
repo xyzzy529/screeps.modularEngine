@@ -4,14 +4,23 @@ module.exports = mod;
 
 // installer.inject keeps overridden functions in module.baseOf['<namespace>']['<functionName>']
 const KEEP_OVERRIDEN_BASE_FUNCTION = false;
+// allow to run features with missing dependencies
+const TRY_RUN_MISSING_DEPENDENCIES = true;
 const BAD_NODE_CPU = 6;
 
 const profiler = require('engine.profiler');
 const memory = require('engine.memory');
 
-function Feature(name){
+// DEPLOYMENT will be set during grunt deployment in /dist only
+mod.DEPLOYMENT = 0;
+
+let features = [];
+let settings = {};
+
+function Feature(name, setting){
     let that = this;
     this.name = name;
+    this.settings = setting;
     this.files = {};
     this.requiresMemory = false;
     this.memory = null;
@@ -53,9 +62,9 @@ function Feature(name){
     this.flush = new LiteEvent(false);
     this.flush.preCall = this.setContext;
     this.flush.postCall = this.releaseContext;
-    this.register = new LiteEvent(false);
-    this.register.preCall = this.setContext;
-    this.register.postCall = this.releaseContext;
+    this.initialize = new LiteEvent(false);
+    this.initialize.preCall = this.setContext;
+    this.initialize.postCall = this.releaseContext;
     this.analyze = new LiteEvent(false);
     this.analyze.preCall = this.setContext;
     this.analyze.postCall = this.releaseContext;
@@ -77,12 +86,16 @@ function Feature(name){
         }        
         this.memoryPartitions.forEach(m => memory.set(m));
     };
+    this.defaultValue = function(parameter, value){
+        if( this.settings[parameter] === undefined ) 
+            this.settings[parameter] = value;
+    };
 };
 
 const globalExtension = {
     CRAYON: {
         error: '#e79da7',
-        warning: { color: 'yellow', 'font-weight': 'bold' },
+        warning: { color: 'yellow' }, 
         ok: { color: 'green', 'font-weight': 'bold' },
         information: '#82a1d6',
         verbose: '#999',
@@ -269,14 +282,13 @@ const system = {
                 if( global.system == null ) global.system = {};
                 global.system.version = mod.DEPLOYMENT;
                 global.sysMemUpdate = true;
+                console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
             }
 
             _.assign(global, globalExtension);
             global.feature = {};
-            mod.features.forEach(this.installFeature);
+            features.forEach(this.installFeature);
             global.installedVersion = mod.DEPLOYMENT;
-
-            if( isNewDeployment ) console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
         }
 
         // setup memory
@@ -315,39 +327,58 @@ const system = {
             featureIndex = require(`features.${name}.index`);
         } catch(e) {
             if( e.message && e.message.indexOf('Unknown module') > -1 ){
-                console.log(`Unable to find feature index file for "${name}"!`);
+                log(`Unable to find feature index file for "${name}"!`, {
+                    severity: 'error', 
+                    scope: 'core'
+                });
             } else {
-                console.log(`Error loading feature index "${name}"!<br/>${e.toString()}`);
+                log(`Error loading feature index "${name}"!`, {
+                    severity: 'error', 
+                    scope: 'core'
+                }, e);
             }
             featureIndex = null;
         }
+
+        if( featureIndex.dependencies != null ){
+            const notRegistered = f => !features.includes(f);
+            const missing = featureIndex.dependencies.find(notRegistered);
+            if( missing != null && missing.length !== 0  ){
+                log(`Feature "${name}" has missing dependencies!`, {
+                    severity: 'warning', 
+                    scope: 'core'
+                }, missing);
+                if( TRY_RUN_MISSING_DEPENDENCIES !== true ) return;
+            }
+        }
+
         if( featureIndex != null && featureIndex.install != null ){
-            const feature = new Feature(name);
+            const feature = new Feature(name, settings[name]);
             feature.setContext();
             try{
                 featureIndex.install();
                 global.feature[name] = feature;
             }catch(e) {
-                console.log(`Error installing feature "${name}"!<br/>${e.toString()}`);
+                log(`Error installing feature "${name}"!`, {
+                    severity: 'error', 
+                    scope: 'core'
+                }, e);
             }
             feature.releaseContext();
         }
     }
 };
 
-mod.features = [];
-// DEPLOYMENT will be set during grunt deployment in /dist only
-mod.DEPLOYMENT = 0;
-
-mod.registerFeature = function(name){
-    mod.features.push(name);
+mod.registerFeature = function(name, setting){
+    features.push(name);
+    settings[name] = setting || {};
 };
 mod.run = function(enableProfiler = false){
     if( enableProfiler ) profiler.enable();
     profiler.wrap(function() {
         system.bootstrap(enableProfiler);
         _.forEach(global.feature, f => f.flush.trigger());
-        _.forEach(global.feature, f => f.register.trigger());
+        _.forEach(global.feature, f => f.initialize.trigger());
         _.forEach(global.feature, f => f.analyze.trigger());
         let limit = global.state.isBadNode ? 0.8 : 0.3;
         if( global.state.bucketLevel > limit )

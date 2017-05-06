@@ -5,11 +5,11 @@
 let mod = {};
 module.exports = mod;
 
-function flush(){
+function initialize(){
     // access feature memory using context.memory.getObject(key, createIfNull=true) 
     // omitting the second argument or setting to true will create an empty object {}, if 'key' is not found. setting false returns null instead.
     let tick = context.memory.getObject('tick', false); 
-    if( tick == null ) tick = 0;
+    if( tick == null ) tick = context.settings.INITIAL_COUNTER;
     else tick++;
     // you need to call setObject to write back. 
     context.memory.setObject('tick', tick);
@@ -29,12 +29,12 @@ function execute(){
 }
 
 // register local functions to context events
-context.flush.on(flush);
+context.initialize.on(initialize);
 context.execute.on(execute);
 
 // available events are (triggered in that order): 
 // - flush
-// - register
+// - initialize
 // - analyze
 // - execute
 // - cleanup
