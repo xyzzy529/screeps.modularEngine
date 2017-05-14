@@ -6,7 +6,7 @@
 Hi folks, 
 
 this is an idea I came across: a fully modular screeps repository. Where every functionality is contained in exchangeable extensions. 
-Core is this one, containing grunt deployment & base engine (raw memory mamagement, cycle phases/events). 
+Core is this one, containing grunt deployment & base engine (raw memory management, cycle phases/events). 
 
 Anything else needs to be developed in additional *features*. 
 Each feature should be contained in a separate repository. This way, everybody can combine features as they like to. For example, there could be different alternative (replacing) navigation features, or different tower features, anything... 
