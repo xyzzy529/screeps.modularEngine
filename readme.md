@@ -16,6 +16,8 @@ To "use" a feature, you need to register it to your individual main.js (see exam
 
 There is a sample feature included in this repository to explain how features work (and I'm already working on real some, in separate repos). 
 
+Obvious drawback: it is only working as soon as a minimum set of features exists (which is not complete yet). 
+
 Please feel free to [drop me a line](mailto:git@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
 
 ### Installation
