@@ -25,9 +25,10 @@ function Feature(name, setting){
     this.files = {};
     this.requiresMemory = false;
     this.memory = null;
-    this.logScopes = null;
+    this.logScopes = null;  
     // additional partitions
     this.memoryPartitions = [];
+
     this.setContext = function(){
         global.context = that;
     };
@@ -291,7 +292,6 @@ const system = {
             features.forEach(this.installFeature);
             global.installedVersion = mod.DEPLOYMENT;
         }
-
         // setup memory
         memory.init();
         _.invoke(global.feature, 'initMemory');
