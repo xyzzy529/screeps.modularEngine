@@ -63,10 +63,12 @@ Commands
   Providing simple heal, (urgent) repair & attack functionality
 
 * [navigation](https://github.com/cyberblast/screeps.feature.navigation)  
-  Utilizing PathFinder. Caching costMatrices, cross room paths & local paths. 
+  Utilizing PathFinder. Caching costMatrices, cross room paths & local paths.  
   Providing some additional room features (isHighwayRoom, isSKRoom etc...)
 
-* [foundation](https://github.com/cyberblast/screeps.feature.foundation) *(Incomplete)*  
-  Basic foundation to get screeps up & running. 
-  Analyzes rooms & triggers events. 
+* [foundation](https://github.com/cyberblast/screeps.feature.foundation) *(incomplete)*  
+  Basic foundation to get screeps up & running.  
+  Analyzes rooms & triggers events.  
   May get reduced (split up to separate features).
+
+[Notify about a missing feature](mailto:git@cyberblast.org)
