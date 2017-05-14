@@ -162,6 +162,7 @@ mod.get = function(name){
 
 mod.set = function(name){
     name = trimName(name);
+
     let partition = global.partition[name];
     if( partition != null && partition.changed === true ){
         log(`Saving memory partition ${partition.name}!`, {

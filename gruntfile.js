@@ -138,4 +138,5 @@ module.exports = function(grunt) {
     grunt.registerTask('ugly', ['clean', 'copy:src', 'deploymentnumber', 'webpack', 'uglify']);
     // uglified [experimental]
     grunt.registerTask('ugly-deploy', ['clean', 'copy:src', 'deploymentnumber', 'webpack', 'uglify', 'switch-to-pack-deploy', 'screeps']);
+
 };
