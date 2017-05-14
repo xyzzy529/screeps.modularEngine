@@ -5,7 +5,7 @@
 
 Hi folks, 
 
-this is an idea i came across: a fully modular screeps repository. Where every functionality is contained in exchangeable extensions. 
+this is an idea I came across: a fully modular screeps repository. Where every functionality is contained in exchangeable extensions. 
 Core is this one, containing grunt deployment & base engine (raw memory mamagement, cycle phases/events). 
 
 Anything else needs to be developed in additional *features*. 
