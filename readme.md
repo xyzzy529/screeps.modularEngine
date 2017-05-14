@@ -71,4 +71,4 @@ Commands
   Analyzes rooms & triggers events.  
   May get reduced (split up to separate features).
 
-[Notify about a missing feature](mailto:git@cyberblast.org)
+[Notify about an exiting feature not listed](mailto:git@cyberblast.org)
