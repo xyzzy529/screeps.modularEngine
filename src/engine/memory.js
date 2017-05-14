@@ -79,7 +79,7 @@ function Partition(index, name, tick, size) {
         if( _loaded !== true ) load();
         handler(_data);
         this.changed = true;
-    };    
+    };
     this.getObject = function(key, createIfNull = true){
         if( _loaded !== true ) load();
         if( _data[key] == null && createIfNull ){
@@ -92,6 +92,10 @@ function Partition(index, name, tick, size) {
         if( _loaded !== true ) load();
         _data[key] = value;
         this.changed = true;
+    };
+    this.hasKey = function(key){
+        if( _loaded !== true ) load();
+        return _data[key] != null;
     };
 };
 

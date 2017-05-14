@@ -15,7 +15,7 @@ mod.install = function(){
     // context.memoryPartitions = ['someName1'];
     // Those partitions are accessible using global.partition['someName1']
 
-    // setting parameter default values (may get overridden in main.js feature registration)
+    // setting parameter default values (may get overridden in individual main.js feature registration)
     context.defaultValue('INITIAL_COUNTER', 0);
 
     // context log scopes will be merged (only when logging from within the feature) with global log scope configuration
