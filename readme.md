@@ -9,9 +9,9 @@ this is an idea I came across: a fully modular screeps repository. Where every f
 Core is this one, containing grunt deployment & base engine (raw memory management, cycle phases/events). 
 
 Anything else needs to be developed in additional *features*. 
-Each feature should be contained in a separate repository. This way, everybody can combine features as they like to. For example, there could be different alternative (replacing) navigation features, or different tower features, anything... 
+Each feature should be contained in a separate repository. This way, everybody can combine features as one likes to. For example, there could be different alternative (replacing) navigation features, or different tower features, anything... 
 
-Every feature needs to be placed within the features folder (clone to /src/features or create a new sub directory there and init a new git repository).
+Every feature needs to be placed within the features folder (clone to /src/features or create a new sub directory and init a new git repository).
 To "use" a feature, you need to register it to your individual main.js (see example.main.js). 
 
 There is a sample feature included in this repository to explain how features work (and I'm already working on real some, in separate repos). 
@@ -56,8 +56,7 @@ Commands
   `grunt deploy [--branch=<customBranch>]`  
   Default branch is defined in screeps.json
   
-## Available Features 
-*List may be incomplete*
+## Known existing features
 
 * [basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
   Providing simple heal, (urgent) repair & attack functionality
@@ -70,5 +69,3 @@ Commands
   Basic foundation to get screeps up & running.  
   Analyzes rooms & triggers events.  
   May get reduced (split up to separate features).
-
-[Notify about an exiting feature not listed](mailto:git@cyberblast.org)
