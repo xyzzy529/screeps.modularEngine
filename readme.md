@@ -58,14 +58,14 @@ Commands
   
 ## Known existing features
 
-* [basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
+* [cyberblast/screeps.feature.basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
   Providing simple heal, (urgent) repair & attack functionality
 
-* [navigation](https://github.com/cyberblast/screeps.feature.navigation)  
+* [cyberblast/screeps.feature.navigation](https://github.com/cyberblast/screeps.feature.navigation)  
   Utilizing PathFinder. Caching costMatrices, cross room paths & local paths.  
   Providing some additional room features (isHighwayRoom, isSKRoom etc...)
 
-* [foundation](https://github.com/cyberblast/screeps.feature.foundation) *(incomplete)*  
+* [cyberblast/screeps.feature.foundation](https://github.com/cyberblast/screeps.feature.foundation) *(incomplete)*  
   Basic foundation to get screeps up & running.  
   Analyzes rooms & triggers events.  
   May get reduced (split up to separate features).

@@ -5,17 +5,18 @@
 let mod = {};
 module.exports = mod;
 
-// copy locally to have at hand for later calls (from different feature context) (not required for this example...)
-const INITIAL_COUNTER = context.settings.INITIAL_COUNTER;
+// copy locally to have at hand within functions when called from other contexts
+// (not required for this example, just to show the idea)
+let feature = context;
 
 function initialize(){
     // access feature memory using context.memory.getObject(key, createIfNull=true) 
     // omitting the second argument or setting to true will create an empty object {}, if 'key' is not found. setting false returns null instead.
-    let tick = context.memory.getObject('tick', false); 
-    if( tick == null ) tick = INITIAL_COUNTER;
+    let tick = feature.memory.getObject('tick', false);
+    if( tick == null ) tick = feature.settings.INITIAL_COUNTER;
     else tick++;
     // you need to call setObject to write back. 
-    context.memory.setObject('tick', tick);
+    feature.memory.setObject('tick', tick);
 }
 function execute(){
     // skip on low bucket
@@ -27,17 +28,22 @@ function execute(){
         log('Hello World!', {
             scope: 'census', 
             severity: 'verbose'
-        }, context.memory.getObject('tick'));
+        }, feature.memory.getObject('tick'));
     }
 }
 
 // register local functions to context events
-context.initialize.on(initialize);
-context.execute.on(execute);
+feature.initialize.on(initialize);
+feature.execute.on(execute);
 
 // available events are (triggered in that order): 
 // - flush
+//   create or delete objects/cache/memory at loop start
 // - initialize
+//   attach to events, prepare
 // - analyze
+//   scan environment. trigger events (will get executed delayed).
 // - execute
+//   do something. release events to subscribers.
 // - cleanup
+//   save or clean up memory/cache. Loop end imminent.
