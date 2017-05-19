@@ -13,13 +13,11 @@
   * Add Flag.found event for each primary color
 * Room
   * trigger Room.collapsed
-* Complete event documentation
-* Add extension documentation (added properties etc)
-* Add feature parameter documentation
 
 ### navigation
 
-* implement segment backend with fixed width fields to use better serialization (no JSON)
+* implement segment backend with fixed width fields for costMatrices with better serialization (no JSON).  
+Initial Idea:
 ```JavaScript
 global.serialize = function(unserialized){
     return String.fromCharCode.apply(null, new Uint16Array(unserialized._bits.buffer))
@@ -35,18 +33,16 @@ global.deserialize = function(serialized){
     return matrix;
 }
 ```
-* Add extension documentation (added properties etc)
-* Add feature parameter documentation
 
 ### basicTower
 
 * change static whitelist to isPlayerWhitelisted callback => intel feature
-* Add extension documentation (added properties etc)
-* Add feature parameter documentation
 
-## Overall
+### Overall
 
-* Implement global.isPlayerWhitelisted(playername) callback => intel feature
+* Implement global.isPlayerWhitelisted(playername) callback => Add intel feature
+
+*Soft goals:*
 * Add event documentation for all features (in its readme.md)
 * Add extension documentation (added properties etc) for all features (in its readme.md)
 * Add feature parameter documentation for all features (in its readme.md)
@@ -99,9 +95,24 @@ global.deserialize = function(serialized){
 
 ## 6. Source Keepers
 
-* Implement SKFarming Feature
+* Implement SKFarming feature
 
 ## 7. Power
 
-* Add Observation Feature
-* Add PowerFarming Feature
+* Add observation feature
+* Add PowerFarming feature
+
+## 8. Analysis
+
+* Add statistics feature 
+
+## 9. Advanced Economy
+
+* Auto Buy
+* Direct trades
+
+## 10. Advanced War Features
+
+* Auto Nuker
+* Advanced invasion techniques 
+* Advanced defense techniques 
