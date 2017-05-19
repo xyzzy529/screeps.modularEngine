@@ -43,9 +43,10 @@ global.deserialize = function(serialized){
 * Implement global.isPlayerWhitelisted(playername) callback => Add intel feature
 
 *Soft goals:*
-* Add event documentation for all features (in its readme.md)
-* Add extension documentation (added properties etc) for all features (in its readme.md)
-* Add feature parameter documentation for all features (in its readme.md)
+* Each feature readme
+  * Add event documentation
+  * Add feature parameter documentation
+  * (Add extension documentation (added properties etc)) *optional*
 * Add Licenses
 
 # Backlog
