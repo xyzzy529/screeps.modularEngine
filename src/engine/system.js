@@ -2,8 +2,6 @@
 let mod = {};
 module.exports = mod;
 
-// installer.inject keeps overridden functions in module.baseOf['<namespace>']['<functionName>']
-const KEEP_OVERRIDEN_BASE_FUNCTION = false;
 // allow to run features with missing dependencies
 const TRY_RUN_MISSING_DEPENDENCIES = true;
 // consider curent node bad when profiler wrap takes more than this amount of cpu
