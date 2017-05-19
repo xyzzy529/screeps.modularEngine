@@ -119,7 +119,7 @@ const globalExtension = {
         military: {severity: 'information', promptSign: 'black'}, 
         PathFinding: {severity: 'information', promptSign: '#e6de99'}, // light yellow
         RoadConstruction: {severity: 'information', promptSign: 'yellow'}, 
-        market: {severity: 'information', promptSign: 'orange'}, 
+        market: {severity: 'information', promptSign: '#ffaa00'}, // orange
         census: {severity: 'warning', promptSign: '#82a1d6'}, // light blue
         remoteMining: {severity: 'information', promptSign: '#006400'}, // dark green
         CreepAction: {severity: 'information', promptSign: '#fff'}, // white
@@ -365,6 +365,7 @@ const system = {
                     severity: 'error', 
                     scope: 'core'
                 }, e);
+                console.log(e);
             }
             feature.releaseContext();
         }
