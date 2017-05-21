@@ -1,5 +1,5 @@
 
-# cyberblast/screeps.engine
+# cyberblast/screeps.modularEngine
 
 ### Intro
 
@@ -30,12 +30,12 @@ Please feel free to [drop me a line](mailto:git@cyberblast.org) if you like it o
 
 3. Clone repository
   * via CLI  
-    `git clone https://github.com/cyberblast/screeps.engine.git`  
+    `git clone https://github.com/cyberblast/screeps.modularEngine.git`  
   * via Github Desktop  
-    Click the plus sign (+) at the top left corner, click clone and select `cyberblast`, then `screeps.engine`.  
+    Click the plus sign (+) at the top left corner, click clone and select `cyberblast`, then `screeps.modularEngine`.  
 
 4. Install dependencies after changing directory into the newly cloned work area  
-  `cd screeps.engine`  
+  `cd screeps.modularEngine`  
   `npm i`
 
 5. Create a screeps.json file (copy example.screeps.json) & enter screeps account login data  
