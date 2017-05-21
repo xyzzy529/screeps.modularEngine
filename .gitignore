@@ -8,6 +8,7 @@ overrides/
 backup/
 src/features/
 !src/features/sample/
+grunt.private/
 
 ### Dreamweaver template
 # DW Dreamweaver added files

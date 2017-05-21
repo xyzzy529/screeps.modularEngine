@@ -32,6 +32,21 @@ global.deserialize = function(serialized){
     matrix._bits = new Uint8Array(buf);
     return matrix;
 }
+
+or (to be measured)
+
+global.serialize = function(unserialized){
+    return String.fromCharCode.apply(null, unserialized._bits)
+}
+global.deserialize = function(serialized){
+    let chars = new Uint8Array(new ArrayBuffer(serialized.length));
+    for (let i=0; i < serialized.length; i++) {
+        chars[i] = serialized.charCodeAt(i);
+    }
+    let matrix = new PathFinder.CostMatrix;
+    matrix._bits = chars;
+    return matrix;
+}
 ```
 
 ### basicTower
@@ -42,12 +57,10 @@ global.deserialize = function(serialized){
 
 * Implement global.isPlayerWhitelisted(playername) callback => Add intel feature
 
-*Soft goals:*
-* Each feature readme
+* For each feature (readme)
   * Add event documentation
   * Add feature parameter documentation
   * (Add extension documentation (added properties etc)) *optional*
-* Add Licenses
 
 # Backlog
 
