@@ -17,6 +17,13 @@ mod.install = function(){
 
     // setting parameter default values (may get overridden in individual main.js feature registration)
     context.defaultValue('INITIAL_COUNTER', 0);
+    /*
+    // you can define multiple default values at once using this syntax
+    context.defaultValues({
+        INITIAL_COUNTER: 0, 
+        something: 'else'
+    });
+    */
 
     // context log scopes will be merged (only when logging from within the feature) with global log scope configuration
     // in this sample we are extending logging severity for 'census' log-context to 'verbose' (global is set to 'warning')

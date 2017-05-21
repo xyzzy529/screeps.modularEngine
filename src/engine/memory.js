@@ -185,9 +185,10 @@ mod.init = function(){
     rawPartitions.forEach(initialize);
 };
 
-mod.save = function(){
+mod.save = function(cleanUnusedPartitions = false){
     used.forEach(mod.set);
-    allNames.forEach(cleanUp);
+    if( cleanUnusedPartitions )
+        allNames.forEach(cleanUp);
 
     if( used.length === 0 ) RawMemory.set(' ');
     else {

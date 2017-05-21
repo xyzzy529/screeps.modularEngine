@@ -32,9 +32,9 @@ global.deserialize = function(serialized){
     matrix._bits = new Uint8Array(buf);
     return matrix;
 }
-
+```
 or (to be measured)
-
+```JavaScript
 global.serialize = function(unserialized){
     return String.fromCharCode.apply(null, unserialized._bits)
 }

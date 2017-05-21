@@ -16,10 +16,10 @@ mod.DEPLOYMENT = 0;
 let features = [];
 let settings = {};
 
-function Feature(name, setting){
+function Feature(name, userSettings){
     let that = this;
     this.name = name;
-    this.settings = setting;
+    this.settings = userSettings;
     this.files = {};
     this.requiresMemory = false;
     this.memory = null;
@@ -87,8 +87,12 @@ function Feature(name, setting){
         this.memoryPartitions.forEach(m => memory.set(m));
     };
     this.defaultValue = function(parameter, value){
-        if( this.settings[parameter] === undefined ) 
+        if( userSettings[parameter] === undefined )
             this.settings[parameter] = value;
+    };
+    this.defaultValues = function(defaults){
+        _.assign(defaults, userSettings);
+        _.assign(this.settings, defaults);
     };
 };
 
@@ -298,7 +302,7 @@ const system = {
         if( enableProfiler ) active.push(1);
         RawMemory.setActiveSegments(active); 
     },
-    shutdown(enableProfiler){
+    shutdown(enableProfiler, flushUnusedPartitions){
         // execute buffered command
         const command = RawMemory.segments[2];
         if(command != null && command !== '') {
@@ -312,7 +316,7 @@ const system = {
         }
 
         _.invoke(global.feature, 'saveMemory');
-        memory.save();
+        memory.save(flushUnusedPartitions);
 
         if( global.sysMemUpdate === true ) {
             if( global.system == null ) RawMemory.segments[0] = '';
@@ -374,10 +378,11 @@ mod.registerFeature = function(name, setting){
     features.push(name);
     settings[name] = setting || {};
 };
-mod.run = function(enableProfiler = false){
-    if( enableProfiler ) profiler.enable();
+// settings:{enableProfiler: false, flushUnusedPartitions: false}
+mod.run = function(settings = {}){
+    if( settings.enableProfiler ) profiler.enable();
     profiler.wrap(function() {
-        system.bootstrap(enableProfiler);
+        system.bootstrap(settings.enableProfiler);
         _.forEach(global.feature, f => f.flush.trigger());
         _.forEach(global.feature, f => f.initialize.trigger());
         _.forEach(global.feature, f => f.analyze.trigger());
@@ -392,6 +397,6 @@ mod.run = function(enableProfiler = false){
         }
         _.forEach(global.feature, f => f.cleanup.trigger());
         global.context = null;
-        system.shutdown(enableProfiler);
+        system.shutdown(settings.enableProfiler, settings.flushUnusedPartitions);
     });
 };

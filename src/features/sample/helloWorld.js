@@ -16,6 +16,7 @@ function initialize(){
     if( tick == null ) tick = feature.settings.INITIAL_COUNTER;
     else tick++;
     // you need to call setObject to write back. 
+    // this is required to avoid serialization (save cpu) if there is no change on that partition
     feature.memory.setObject('tick', tick);
 }
 function execute(){
