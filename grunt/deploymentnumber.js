@@ -29,8 +29,10 @@ module.exports = function(grunt){
     
     return {
         options: {
+            // where to put current deployment number (deployment)
             file: 'dist/engine.system.js', 
             field: 'DEPLOYMENT',
+            // where to store current deployment number (source)
             configFile: 'screeps.json', 
             configField: 'deployment'
         }

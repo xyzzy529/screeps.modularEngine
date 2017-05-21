@@ -33,8 +33,12 @@ function Feature(name, userSettings){
     this.releaseContext = function(){
         global.context = null;
     };
-    this.load = function(file){
-        this.files[file] = require(`features.${this.name}.${file}`);
+    this.load = function(file, absolute = false){
+        if( absolute === true ){
+            this.files[file] = require(file);
+        } else {
+            this.files[file] = require(`features.${this.name}.${file}`);
+        }
         return this.files[file];
     };
     this.inject = function(base, file) {
@@ -216,7 +220,7 @@ const globalExtension = {
             collect = collectAgain;
             let that = this;
             this.triggers.forEach(d => that.call(d));
-            let response = this.triggers;
+            let response = this.triggers.slice();
             this.triggers = [];
             return response;
         };
