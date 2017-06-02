@@ -13,6 +13,14 @@ function getGitDirectories (srcpath) {
 }
 
 module.exports = function(grunt) {
+    grunt.registerTask('forceoff', 'Forces the force flag off', function() {
+        grunt.option('force', false);
+    });
+
+    grunt.registerTask('forceon', 'Forces the force flag on', function() {
+        grunt.option('force', true);
+    });
+
     grunt.registerTask('pushAll', function (message) {
         let options = this.options();
         if( message == null ) message = "changes";
@@ -27,7 +35,6 @@ module.exports = function(grunt) {
             gitpush: {}
         }
         function addTask(name, p){
-            grunt.log.oklns('Queueing repo: ' + name + ', path: ' + p );
             taskConfig.gitadd[name] = {
                 options: {
                     cwd: p,
@@ -46,10 +53,19 @@ module.exports = function(grunt) {
                 }
             };
         }
+        function run(name){
+            grunt.task.run([
+                'gitadd:' + name,
+                'forceon',
+                'gitcommit:' + name,
+                'forceoff',
+                'gitpush:' + name
+            ]);
+        }
         for (const i in features) {
             const feature = features[i];
             const p = path.join(options.src, feature);
-            if( i == 0 )addTask(feature, p);
+            addTask(feature, p);
         }
         addTask('engine', './');
         
@@ -57,13 +73,11 @@ module.exports = function(grunt) {
         for (const task in taskConfig) {
             grunt.config(task, taskConfig[task]);
         }
-        
-        // run tasks
-        grunt.task.run([
-            'gitadd',
-            'gitcommit',
-            'gitpush'
-        ]);
+        // register task config
+        for (const i in features) {
+            run(features[i]);
+        }
+        run('engine');
     });
     return {
         options: {
