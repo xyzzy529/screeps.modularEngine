@@ -18,7 +18,6 @@
 
 * On system segment create dictionary of registered features and memory partitions
   * in Memory save() or cleanup() compare allNames with dictionary for cleanUnusedPartitions instead of deleting "unused"
-* Create grunt task to commit all features
 * For each feature repo readme
   * Add event documentation
   * Add feature parameter documentation

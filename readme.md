@@ -55,7 +55,9 @@ Commands
   * to build & deploy  
   `grunt deploy [--branch=<customBranch>]`  
   Default branch is defined in screeps.json
-  
+  * commit & push all features  
+  `grunt pushAll:"<commit message>"`
+
 ## Known existing features
 
 * [cyberblast/screeps.feature.basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
