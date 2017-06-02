@@ -15,13 +15,14 @@ mod.DEPLOYMENT = 0;
 
 let features = [];
 let settings = {};
+let featureLogScopes = {};
 
 function Feature(name, userSettings){
     let that = this;
     this.name = name;
     this.settings = userSettings;
     this.files = {};
-    this.requiresMemory = false;
+    this.provideDefaultPartition = false;
     this.memory = null;
     this.logScopes = null;
     // additional partitions
@@ -79,13 +80,13 @@ function Feature(name, userSettings){
     this.cleanup.preCall = this.setContext;
     this.cleanup.postCall = this.releaseContext;
     this.initMemory = function(){
-        if( this.requiresMemory === true ){
+        if( this.provideDefaultPartition === true ){
             this.memory = memory.get(name);
         }
         this.memoryPartitions.forEach(m => memory.get(m));
     };
     this.saveMemory = function(){
-        if( this.requiresMemory === true ){
+        if( this.provideDefaultPartition === true ){
             memory.set(name);
         }        
         this.memoryPartitions.forEach(m => memory.set(m));
@@ -124,11 +125,9 @@ const globalExtension = {
         core: {severity: 'information', promptSign: 'red'}, 
         military: {severity: 'information', promptSign: 'black'}, 
         PathFinding: {severity: 'information', promptSign: '#e6de99'}, // light yellow
-        RoadConstruction: {severity: 'information', promptSign: 'yellow'}, 
         market: {severity: 'information', promptSign: '#ffaa00'}, // orange
         census: {severity: 'warning', promptSign: '#82a1d6'}, // light blue
-        remoteMining: {severity: 'information', promptSign: '#006400'}, // dark green
-        CreepAction: {severity: 'information', promptSign: '#fff'}, // white
+        CreepAction: {severity: 'warning', promptSign: '#fff'}, // white
         Memory: {severity: 'information', promptSign: 'firebrick'}, // red
     },
     isObj: function(val){
@@ -230,9 +229,15 @@ const globalExtension = {
         if( !options ) options = {};
         options.scope = options.scope || 'none';
         options.severity = options.severity || 'none';
+
         let logConfig = LOG_SCOPE[options.scope] || LOG_SCOPE.none;
         if( global.context && global.context.logScopes && global.context.logScopes[options.scope] )
             _.assign(logConfig, global.context.logScopes[options.scope]);
+        if( global.runLogScopes && global.runLogScopes[options.scope] )
+            _.assign(logConfig, global.runLogScopes[options.scope]);
+        if( global.context && featureLogScopes[global.context.name] && featureLogScopes[global.context.name][options.scope] )
+            _.assign(logConfig, featureLogScopes[global.context.name][options.scope]);
+            
         let configSeverityValue = SEVERITY[logConfig.severity] || 5;
         let severityValue = SEVERITY[options.severity] || 0;
         if( severityValue <= configSeverityValue ){
@@ -378,15 +383,17 @@ const system = {
     }
 };
 
-mod.registerFeature = function(name, setting){
+mod.registerFeature = function(name, setting, logScopes){
     features.push(name);
     settings[name] = setting || {};
+    if( logScopes != null ) featureLogScopes[name] = logScopes;
 };
 // settings:{enableProfiler: false, flushUnusedPartitions: false}
-mod.run = function(settings = {}){
-    if( settings.enableProfiler ) profiler.enable();
+mod.run = function(runSettings = {}, logScopes = {}){
+    global.runLogScopes = logScopes;
+    if( runSettings.enableProfiler ) profiler.enable();
     profiler.wrap(function() {
-        system.bootstrap(settings.enableProfiler);
+        system.bootstrap(runSettings.enableProfiler);
         _.forEach(global.feature, f => f.flush.trigger());
         _.forEach(global.feature, f => f.initialize.trigger());
         _.forEach(global.feature, f => f.analyze.trigger());
@@ -401,6 +408,6 @@ mod.run = function(settings = {}){
         }
         _.forEach(global.feature, f => f.cleanup.trigger());
         global.context = null;
-        system.shutdown(settings.enableProfiler, settings.flushUnusedPartitions);
+        system.shutdown(runSettings.enableProfiler, runSettings.flushUnusedPartitions);
     });
 };

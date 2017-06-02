@@ -16,11 +16,6 @@
 
 ### Overall
 
-* Fix memory access
-* feature requiresMemory rename (useDefaultPartition) & default false
-* Allow logScope definition from root main
-* Better feature context
-  * inject context into module during context.load, instead of using global
 * On system segment create dictionary of registered features and memory partitions
   * in Memory save() or cleanup() compare allNames with dictionary for cleanUnusedPartitions instead of deleting "unused"
 * Create grunt task to commit all features
@@ -137,3 +132,6 @@ global.deserialize = function(serialized){
     return matrix;
 }
 ```
+## logging
+
+* don't compile logScopes upon each 'log' but once per feature upon 'run'. or on system segment upon deployment.
