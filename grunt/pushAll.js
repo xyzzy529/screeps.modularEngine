@@ -24,17 +24,14 @@ module.exports = function(grunt) {
     grunt.registerTask('pushAll', function (message) {
         let options = this.options();
         if( message == null ) message = "changes";
-
-        // get list of features
         let features = getGitDirectories(options.src);
 
-        // create task config
         const taskConfig = {
             gitadd: {},
             gitcommit: {},
             gitpush: {}
         }
-        function addTask(name, p){
+        function addGitTask(name, p){
             taskConfig.gitadd[name] = {
                 options: {
                     cwd: p,
@@ -53,7 +50,7 @@ module.exports = function(grunt) {
                 }
             };
         }
-        function run(name){
+        function runGitTask(name){
             grunt.task.run([
                 'gitadd:' + name,
                 'forceon',
@@ -62,22 +59,22 @@ module.exports = function(grunt) {
                 'gitpush:' + name
             ]);
         }
+        
+        // create task config for each feature
         for (const i in features) {
-            const feature = features[i];
-            const p = path.join(options.src, feature);
-            addTask(feature, p);
+            addGitTask(features[i], path.join(options.src, features[i]));
         }
-        addTask('engine', './');
+        addGitTask('engine', './');
         
         // register task config
         for (const task in taskConfig) {
             grunt.config(task, taskConfig[task]);
         }
-        // register task config
+        // run tasks
         for (const i in features) {
-            run(features[i]);
+            runGitTask(features[i]);
         }
-        run('engine');
+        runGitTask('engine');
     });
     return {
         options: {
