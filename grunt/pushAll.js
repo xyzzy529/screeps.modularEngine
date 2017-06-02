@@ -49,7 +49,7 @@ module.exports = function(grunt) {
         for (const i in features) {
             const feature = features[i];
             const p = path.join(options.src, feature);
-            //addTask(feature, p);
+            if( i == 0 )addTask(feature, p);
         }
         addTask('engine', './');
         
