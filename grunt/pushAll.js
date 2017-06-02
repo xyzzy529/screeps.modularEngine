@@ -37,8 +37,7 @@ module.exports = function(grunt) {
             taskConfig.gitcommit[name] = {
                 options: {
                     cwd: p,
-                    message,
-                    allowEmpty: true
+                    message
                 }
             };
             taskConfig.gitpush[name] = {
@@ -50,7 +49,7 @@ module.exports = function(grunt) {
         for (const i in features) {
             const feature = features[i];
             const p = path.join(options.src, feature);
-            addTask(feature, p);
+            //addTask(feature, p);
         }
         addTask('engine', './');
         
