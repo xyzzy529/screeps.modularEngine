@@ -7,17 +7,23 @@
 let feature = context;
 
 function initialize(){
+    // access feature memory using feature.memory.get() and feature.memory.set(value). You can pass as many additional arguments as you want, specifying the path of what you want to get/set
+    // like feature.memory.set({c:1}, 'a', 'b') will set b in { a: { b: { c: 1 }}}
     let tick = feature.memory.get('tick');
+
+    // access feature settings using the context
     if( tick == null ) tick = feature.settings.INITIAL_COUNTER;
     else tick++;
+
     feature.memory.set(tick, 'tick');
 }
 function execute(){
     // skip on low bucket
     if( global.state.bucketLevel > 0.5 ){ 
+
         // log is a custom log function. 
         // param 1: log text
-        // param 2: Classification (scope & severity). Logging can be configured to show / don't show messages, regarding these values...
+        // param 2: Classification {scope, severity, roomName}. Logging can be configured to show / don't show messages, regarding these values...
         // param 3: additional data to show below message. may be an object.
         log('Hello World!', {
             scope: 'census', 

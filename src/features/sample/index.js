@@ -30,6 +30,7 @@ mod.install = function(){
     context.logScopes = {
         census: {severity: 'verbose'}
     };
+    
     // load hello world sample feature module
     context.load('helloWorld');
 };
