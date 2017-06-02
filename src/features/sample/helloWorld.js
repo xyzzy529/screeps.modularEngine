@@ -2,22 +2,15 @@
 // Sample feature
 // Will log a dummy message each tick if bucket level > 50%
 
-let mod = {};
-module.exports = mod;
-
 // copy locally to have at hand within functions when called from other contexts
 // (not required for this example, just to show the idea)
 let feature = context;
 
 function initialize(){
-    // access feature memory using context.memory.getObject(key, createIfNull=true) 
-    // omitting the second argument or setting to true will create an empty object {}, if 'key' is not found. setting false returns null instead.
-    let tick = feature.memory.getObject('tick', false);
+    let tick = feature.memory.get('tick');
     if( tick == null ) tick = feature.settings.INITIAL_COUNTER;
     else tick++;
-    // you need to call setObject to write back. 
-    // this is required to avoid serialization (save cpu) if there is no change on that partition
-    feature.memory.setObject('tick', tick);
+    feature.memory.set(tick, 'tick');
 }
 function execute(){
     // skip on low bucket
@@ -29,7 +22,7 @@ function execute(){
         log('Hello World!', {
             scope: 'census', 
             severity: 'verbose'
-        }, feature.memory.getObject('tick'));
+        }, feature.memory.get('tick'));
     }
 }
 

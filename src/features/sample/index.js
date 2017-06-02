@@ -32,8 +32,4 @@ mod.install = function(){
     };
     // load hello world sample feature module
     context.load('helloWorld');
-
-    // You can call context.inject(base, file) to extend game objects. 
-    // if the overriding module exports an extend() function, it will be called automatically
-    // context.inject(Room, 'extension.room');
 };

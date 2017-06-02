@@ -41,28 +41,28 @@ function Feature(name, userSettings){
         }
         return this.files[file];
     };
-    this.inject = function(base, file) {
-        let alien = require(`features.${this.name}.${file}`);
-        let keys = _.keys(alien);
-        for (const key of keys) {
-            if (typeof alien[key] === "function") {
-                /*
-                if( namespace ){
-                    let original = base[key];
-                    if( !base.baseOf ) base.baseOf = {};
-                    if( !base.baseOf[this.name] ) base.baseOf[this.name] = {};
-                    if( !base.baseOf[this.name][key] ) base.baseOf[this.name][key] = original;
-                }
-                */
-                base[key] = alien[key].bind(base);
-            } else {
-                base[key] = alien[key];
-            }
-        }
-        if( alien.extend !== undefined && typeof alien.extend === "function" ){
-            base.extend();
-        }
-    };
+    // this.inject = function(base, file) {
+    //     let alien = require(`features.${this.name}.${file}`);
+    //     let keys = _.keys(alien);
+    //     for (const key of keys) {
+    //         if (typeof alien[key] === "function") {
+    //             /*
+    //             if( namespace ){
+    //                 let original = base[key];
+    //                 if( !base.baseOf ) base.baseOf = {};
+    //                 if( !base.baseOf[this.name] ) base.baseOf[this.name] = {};
+    //                 if( !base.baseOf[this.name][key] ) base.baseOf[this.name][key] = original;
+    //             }
+    //             */
+    //             base[key] = alien[key].bind(base);
+    //         } else {
+    //             base[key] = alien[key];
+    //         }
+    //     }
+    //     if( alien.extend !== undefined && typeof alien.extend === "function" ){
+    //         base.extend();
+    //     }
+    // };
     this.flush = new LiteEvent(false);
     this.flush.preCall = this.setContext;
     this.flush.postCall = this.releaseContext;
@@ -182,6 +182,7 @@ const globalExtension = {
     // base class for events
     // if (collect), triggers will not call handlers immediately but upon release() instead
     LiteEvent: function(collect = true) {
+        let that = this;
         // registered subscribers
         this.handlers = [];
         // collected calls
@@ -192,36 +193,35 @@ const globalExtension = {
         this.postCall = null;
         // register a new subscriber
         this.on = function(handler) {
-            this.handlers.push(handler);
+            that.handlers.push(handler);
         };
         // remove a registered subscriber
         this.off = function(handler) {
-            this.handlers = this.handlers.filter(h => h !== handler);
+            that.handlers = that.handlers.filter(h => h !== handler);
         };
         // call all registered subscribers
         this.trigger = function(data) {
-            if( collect ) this.triggers.push(data == null ? 'nullEvent' : data);
-            else this.call(data);
+            if( collect ) that.triggers.push(data == null ? 'nullEvent' : data);
+            else that.call(data);
         };
         this.call = function(data){
-            if( this.preCall != null ) this.preCall();
+            if( that.preCall != null ) that.preCall();
             try{
                 if( data === 'nullEvent' ) data = null;
-                this.handlers.slice(0).forEach(h => h(data));
+                that.handlers.slice(0).forEach(h => h(data));
             } catch(e){
                 log('Error in LiteEvent.trigger!', {
                     scope: 'core', 
                     severity: 'error'
                 }, e);
             }
-            if( this.postCall != null ) this.postCall();
+            if( that.postCall != null ) that.postCall();
         };
         this.release = function(collectAgain = false){
             collect = collectAgain;
-            let that = this;
-            this.triggers.forEach(d => that.call(d));
-            let response = this.triggers.slice();
-            this.triggers = [];
+            that.triggers.forEach(d => that.call(d));
+            let response = that.triggers.slice();
+            that.triggers = [];
             return response;
         };
     },

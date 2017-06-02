@@ -15,7 +15,7 @@ module.exports.loop = function () {
     /*
     engine.run({
         enableProfiler: false, 
-        flushUnusedPartitions: false
+        flushUnusedPartitions: false // experimental
     });
     */
 };

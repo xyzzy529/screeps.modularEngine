@@ -8,55 +8,21 @@
   * Implement Creep.spawningStarted event
   * clear memory on cleanup: mod.staleCreeps & mod.staleHostiles
   * Save bodyCount property to memory. may also get filled at spawning
-  * Treat Intruders in rooms marked for claiming/mining as Enemy, not EnemyOnNeutralGround => callback?
+  * Treat Intruders in rooms marked for claiming/mining as Enemy, not EnemyOnNeutralGround (in analyzeHostile). maybe use a callback
 * Flag
   * Add Flag.found event for each primary color
 * Room
   * trigger Room.collapsed
 
-### navigation
-
-* implement segment backend with fixed width fields for costMatrices with better serialization (no JSON).  
-Initial Idea:
-```JavaScript
-global.serialize = function(unserialized){
-    return String.fromCharCode.apply(null, new Uint16Array(unserialized._bits.buffer))
-}
-global.deserialize = function(serialized){
-    let buf = new ArrayBuffer(serialized.length*2);
-    let chars = new Uint16Array(buf);
-    for (let i=0; i < serialized.length; i++) {
-        chars[i] = serialized.charCodeAt(i);
-    }
-    let matrix = new PathFinder.CostMatrix;
-    matrix._bits = new Uint8Array(buf);
-    return matrix;
-}
-```
-or (to be measured)
-```JavaScript
-global.serialize = function(unserialized){
-    return String.fromCharCode.apply(null, unserialized._bits)
-}
-global.deserialize = function(serialized){
-    let chars = new Uint8Array(new ArrayBuffer(serialized.length));
-    for (let i=0; i < serialized.length; i++) {
-        chars[i] = serialized.charCodeAt(i);
-    }
-    let matrix = new PathFinder.CostMatrix;
-    matrix._bits = chars;
-    return matrix;
-}
-```
-
-### basicTower
-
-* change static whitelist to isPlayerWhitelisted callback => intel feature
-
 ### Overall
 
-* Implement global.isPlayerWhitelisted(playername) callback => Add intel feature
-
+* Fix memory access
+* feature requiresMemory rename (useDefaultPartition) & default false
+* Allow logScope definition from root main
+* Better feature context
+  * inject context into module during context.load, instead of using global
+* On system segment create dictionary of registered features and memory partitions
+  * in Memory save() or cleanup() compare allNames with dictionary for cleanUnusedPartitions instead of deleting "unused"
 * For each feature (readme)
   * Add event documentation
   * Add feature parameter documentation
@@ -130,3 +96,43 @@ global.deserialize = function(serialized){
 * Auto Nuker
 * Advanced invasion techniques 
 * Advanced defense techniques 
+
+
+# Ideas
+
+## navigation feature
+
+### matrix serialization
+
+* implement segment backend with fixed width fields for costMatrices with better serialization (no JSON).  
+Initial Idea:
+```JavaScript
+global.serialize = function(unserialized){
+    return String.fromCharCode.apply(null, new Uint16Array(unserialized._bits.buffer))
+}
+global.deserialize = function(serialized){
+    let buf = new ArrayBuffer(serialized.length*2);
+    let chars = new Uint16Array(buf);
+    for (let i=0; i < serialized.length; i++) {
+        chars[i] = serialized.charCodeAt(i);
+    }
+    let matrix = new PathFinder.CostMatrix;
+    matrix._bits = new Uint8Array(buf);
+    return matrix;
+}
+```
+or (to be measured/Compared)
+```JavaScript
+global.serialize = function(unserialized){
+    return String.fromCharCode.apply(null, unserialized._bits)
+}
+global.deserialize = function(serialized){
+    let chars = new Uint8Array(new ArrayBuffer(serialized.length));
+    for (let i=0; i < serialized.length; i++) {
+        chars[i] = serialized.charCodeAt(i);
+    }
+    let matrix = new PathFinder.CostMatrix;
+    matrix._bits = chars;
+    return matrix;
+}
+```

@@ -5,7 +5,6 @@ module.exports = mod;
 const SPLITTER = '³';
 
 let rawPartitions = [];
-global.partition = {};
 let allNames = [];
 let used = [];
 
@@ -15,6 +14,7 @@ function trimName(name){
 };
 
 function initialize(raw, index) {
+    if( global.partition === undefined ) global.partition = {};
     const name = raw.substr(0,10).trim();
     if( name === '' ) return;
     allNames.push(name);
@@ -75,24 +75,58 @@ function Partition(index, name, tick, size) {
         }
     });
 
-    this.set = function(handler){
+    this.set = function(value, ...path){
         if( _loaded !== true ) load();
-        handler(_data);
-        this.changed = true;
-    };
-    this.getObject = function(key, createIfNull = true){
-        if( _loaded !== true ) load();
-        if( _data[key] == null && createIfNull ){
-            _data[key] = {};
-            this.changed = true;
+        if(path.length === 0 ){
+            // set root
+            _data = value;
         }
-        return _data[key];
-    };
-    this.setObject = function(key, value){
-        if( _loaded !== true ) load();
-        _data[key] = value;
+        else if(path.length === 1 ){
+            // allow callback function
+            let p0 = path[0];
+            if( typeof p0 === 'function' ) 
+                handler(_data);
+            else _data[p0] = value;
+        }
+        else {
+            // go down the path. ensure it exists
+            let obj = _data;
+            for(let i=0; i<path.length-1; i++){
+                if( obj[path[i]] == null ){
+                    obj[path[i]] = {};
+                }
+                obj = obj[path[i]];
+            }
+            obj[path[path.length-1]] = value;
+        }
         this.changed = true;
     };
+    this.delete = function(...path){
+        if( _loaded !== true ) load();
+        this.changed = true;
+        if(path.length === 0 ){
+            // set root
+            _data = {};
+        }
+        else {
+            // go down the path.
+            let obj = _data;
+            for(let i=0; i<path.length-1; i++){
+                obj = obj[path[i]];
+                if( obj == null ) return;
+            }
+            delete obj[path[path.length-1]];
+        }
+    };
+    this.get = function(...path){
+        if( _loaded !== true ) load();
+        let obj = _data;
+        for(let i=0; i<path.length; i++){
+            obj = obj[path[i]];
+            if( obj == null ) return null;
+        }
+        return obj;
+    }
     this.hasKey = function(key){
         if( _loaded !== true ) load();
         return _data[key] != null;
@@ -154,6 +188,7 @@ mod.serialize = function(partition){
 };
 
 mod.get = function(name){
+    if( global.partition === undefined ) return null;
     name = trimName(name);
     let partition = global.partition[name] || newPartition(name);
     used.push(name);
@@ -161,6 +196,7 @@ mod.get = function(name){
 };
 
 mod.set = function(name){
+    if( global.partition === undefined ) return;
     name = trimName(name);
 
     let partition = global.partition[name];
@@ -186,6 +222,7 @@ mod.init = function(){
 };
 
 mod.save = function(cleanUnusedPartitions = false){
+    if( global.partition === undefined ) return;
     used.forEach(mod.set);
     if( cleanUnusedPartitions )
         allNames.forEach(cleanUp);
@@ -194,4 +231,22 @@ mod.save = function(cleanUnusedPartitions = false){
     else {
         RawMemory.set(rawPartitions.join(SPLITTER));
     }
+};
+
+global.getMemory = function(part, ...path){
+    let m = global.partition[part];
+    if( m == null ) return null;
+    return m.get(...path);
+};
+
+global.setMemory = function(value, part, ...path){
+    let m = global.partition[part];
+    if( m == null ) return;
+    m.set(value, ...path);
+};
+
+global.deleteMemory = function(part, ...path){
+    let m = global.partition[part];
+    if( m == null ) return;
+    m.delete(...path);
 };
