@@ -274,6 +274,15 @@ const globalExtension = {
 };
 
 const system = {
+    registerPartition(partition){
+        global.system.partitions.push(partition);
+    },
+    registerFeaturePartitions(feature){
+        if( feature.provideDefaultPartition === true ){
+            system.registerPartition(feature.name);
+        }
+        if( feature.memoryPartitions != null ) feature.memoryPartitions.forEach(system.registerPartition);
+    },
     bootstrap(enableProfiler){
         global.state = {};
         const startCpu = Game.cpu.getUsed();
@@ -283,19 +292,21 @@ const system = {
         const requiresInstall = global.installedVersion !== mod.DEPLOYMENT;
         global.cacheTime = Game.time;
         if( global.state.isNewNode ) global.lastNodeSwitch = Game.time;
-        let isNewDeployment = false;
+        global.state.isNewDeployment = false;
 
         // load modules
         if( requiresInstall ){
             let systemSegment = RawMemory.segments[0];
             if( systemSegment != null && systemSegment.length !== 0 ) global.system = JSON.parse(systemSegment);
-            isNewDeployment = global.system == null || global.system.version !== mod.DEPLOYMENT;
+            global.state.isNewDeployment = global.system == null || global.system.version !== mod.DEPLOYMENT;
 
-            if( isNewDeployment ){
+            if( global.state.isNewDeployment ){
                 if( global.system == null ) global.system = {};
                 global.system.version = mod.DEPLOYMENT;
                 global.sysMemUpdate = true;
                 console.log(`<span style="color:green;font-weight:bold">v${mod.DEPLOYMENT} arrived!</span>`);
+                // recreate dictionary of registered features and memory partitions (during install)
+                global.system.partitions = [];
             }
 
             _.assign(global, globalExtension);
@@ -309,7 +320,7 @@ const system = {
         _.invoke(global.feature, 'initMemory');
         let active = [0,2]; // 0 = system, 1 = profiler, 2 = commandBuffer
         if( enableProfiler ) active.push(1);
-        RawMemory.setActiveSegments(active); 
+        RawMemory.setActiveSegments(active);
     },
     shutdown(enableProfiler, flushUnusedPartitions){
         // execute buffered command
@@ -379,6 +390,11 @@ const system = {
                 console.log(e);
             }
             feature.releaseContext();
+            
+            // Create dictionary of registered features and memory partitions
+            if( global.state.isNewDeployment ){
+                system.registerFeaturePartitions(feature);
+            }
         }
     }
 };
@@ -394,11 +410,11 @@ mod.run = function(runSettings = {}, logScopes = {}){
     if( runSettings.enableProfiler ) profiler.enable();
     profiler.wrap(function() {
         system.bootstrap(runSettings.enableProfiler);
+
         _.forEach(global.feature, f => f.flush.trigger());
         _.forEach(global.feature, f => f.initialize.trigger());
         _.forEach(global.feature, f => f.analyze.trigger());
-        let limit = global.state.isBadNode ? 0.8 : 0.3;
-        if( global.state.bucketLevel > limit )
+        if( global.state.bucketLevel > global.state.isBadNode ? 0.8 : 0.3 )
             _.forEach(global.feature, f => f.execute.trigger());
         else{
             log('Skipping execution phase!', {

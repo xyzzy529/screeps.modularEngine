@@ -16,8 +16,6 @@
 
 ### Overall
 
-* On system segment create dictionary of registered features and memory partitions
-  * in Memory save() or cleanup() compare allNames with dictionary for cleanUnusedPartitions instead of deleting "unused"
 * For each feature repo readme
   * Add event documentation
   * Add feature parameter documentation
@@ -91,6 +89,11 @@
 * Auto Nuker
 * Advanced invasion techniques 
 * Advanced defense techniques 
+
+## 11. Driver cockpit
+
+* Add UI or external components
+* Simplify driver (user) orders 
 
 
 # Ideas

@@ -30,6 +30,11 @@ function initialize(raw, index) {
     else {
         global.partition[name].index = index;
     }
+
+    // if it's not a partition but common memory, delete it
+    if( name.indexOf('{') === 0 ){
+        cleanUp(name);
+    }
     return name;
 };
 
@@ -134,7 +139,7 @@ function Partition(index, name, tick, size) {
 };
 
 function cleanUp(name){
-    if(used.includes(name) === false){
+    if(global.system.partitions.includes(name) === false){
         // delete partition
         let partition = global.partition[name];
         if( partition != null ){
@@ -227,7 +232,7 @@ mod.save = function(cleanUnusedPartitions = false){
     if( cleanUnusedPartitions )
         allNames.forEach(cleanUp);
 
-    if( used.length === 0 ) RawMemory.set(' ');
+    if( global.system.partitions.length === 0 ) ;// RawMemory.set(' ');
     else {
         RawMemory.set(rawPartitions.join(SPLITTER));
     }
