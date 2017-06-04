@@ -1,5 +1,5 @@
 
-# cyberblast/screeps.modularEngine
+# ScreepsOCS/screeps.modularEngine
 
 ### Intro
 
@@ -18,7 +18,7 @@ There is a sample feature included in this repository to explain how features wo
 
 Much work ahead ^^
 
-Please feel free to [drop me a line](mailto:git@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
+Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
 
 ### Installation
 
