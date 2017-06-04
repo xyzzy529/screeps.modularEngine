@@ -2,7 +2,7 @@
 
 ## Current
 
-### Foundation
+### Foundation feature
 
 * Creep
   * Implement Creep.spawningStarted event
@@ -13,13 +13,6 @@
   * Add Flag.found event for each primary color
 * Room
   * trigger Room.collapsed
-
-### Overall
-
-* For each feature repo readme
-  * Add event documentation
-  * Add feature parameter documentation
-  * (Add extension documentation (added properties etc)) *optional*
 
 # Backlog
 
@@ -137,3 +130,10 @@ global.deserialize = function(serialized){
 ## logging
 
 * don't compile logScopes upon each 'log' but once per feature upon 'run'. or on system segment upon deployment.
+
+## documentation
+
+* For each feature repo readme
+  * Add event documentation
+  * Add feature parameter documentation
+  * (Add extension documentation (added properties etc)) *optional*

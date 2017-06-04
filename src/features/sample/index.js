@@ -11,6 +11,7 @@ mod.dependencies = [];
 mod.install = function(){
     // will create a dedicated memory partition utilizing RawMemory. See helloWorld.js for usage.
     context.provideDefaultPartition = true;
+
     // You can specify further additional memory partitions, using context.memoryPartitions
     // context.memoryPartitions = ['someName1'];
     // Those partitions are accessible using global.getMemory('someName1') and global.setMemory(value, 'someName1'). 
@@ -33,6 +34,7 @@ mod.install = function(){
         census: {severity: 'verbose'}
     };
     
-    // load hello world sample feature module
+    // require hello world sample feature module
+    // use feature relative module paths here
     context.load('helloWorld');
 };

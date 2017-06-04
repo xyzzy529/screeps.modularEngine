@@ -36,11 +36,13 @@ module.exports.loop = function () {
         Memory: {severity: 'information', promptSign: 'firebrick'}, // red
     });
     */
-    // log scope can be defined at different levels (lower number wins): 
+    // The same works for engine.registerFeature() - the third param may define logScope overrides
+    //
+    // In the end, log scope can be defined at different levels (lower number wins): 
     // 1. root main: engine.registerFeature()  /defined by enduser /feature impact
     // 2. root main: engine.run()  /defined by enduser /global impact
     // 3. feature index: context.logScopes  /defined by feature development /feature impact
-    // 4. system baseline: global.LOG_SCOPE  /defined by system development /global impact
+    // 4. system baseline: global.LOG_SCOPE  /defined by engine development /global impact
     //
     // valid severity values are (from few to many): 
     // - none
