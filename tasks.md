@@ -1,18 +1,13 @@
 # Tasks
 
-## Current
+## Current Work
 
 ### Foundation feature
 
 * Creep
   * Implement Creep.spawningStarted event
-  * clear memory on cleanup: mod.staleCreeps & mod.staleHostiles
-  * Save bodyCount property to memory. may also get filled at spawning
+  * clear creep memory on cleanup: mod.staleCreeps & mod.staleHostiles
   * Treat Intruders in rooms marked for claiming/mining as Enemy, not EnemyOnNeutralGround (in analyzeHostile). maybe use a callback
-* Flag
-  * Add Flag.found event for each primary color
-* Room
-  * trigger Room.collapsed
 
 # Backlog
 
@@ -23,8 +18,9 @@
   * auto identify unused adjacent rooms and try to make them remotes
   * creep types & actions
   * energy & mineral
-  * dropmining (for low lvl) & store mining
-* Add worker feature
+  * dropmining (for low lvl) & container mining
+* Add basic worker feature
+  * build, repair, fortify, support hauler/upgrader
 * Add hauler feature
   * estimate local & remote hauler requirements
   * creep type & action
@@ -35,8 +31,11 @@
 * Add claimer feature
   * claiming & reserving
 * Add pioneer feature
+  * worker for remote rooms
 * Add defender feature
+  * auto spawn defenses
 * Add guard feature
+  * place guards manually
 
 ## 3. Economy basics
 
@@ -47,12 +46,13 @@
 
 ## 4. Basic war tools
 
-* Robbing
+* Warrior
 * Sapper
 * Healer
-* Train
+* Robber
 * Hopper/Teaser
-* Invasion
+* Train (creep combo)
+* Auto safe mode
 
 ## 5. Labs
 
