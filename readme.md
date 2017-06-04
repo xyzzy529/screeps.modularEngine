@@ -5,7 +5,7 @@
 
 Hi folks, 
 
-this is an idea I came across: a fully modular screeps repository. Where every functionality is contained in exchangeable extensions. 
+this is an idea I came across: a fully modular screeps AI. Where every functionality is contained in exchangeable extensions. 
 Core is this one, containing grunt deployment & base engine (lazy raw memory partitions, loop phases, feature processing). 
 
 Anything else needs to be developed in additional *features*. 
@@ -30,9 +30,9 @@ Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it o
 
 3. Clone repository
   * via CLI  
-    `git clone https://github.com/cyberblast/screeps.modularEngine.git`  
+    `git clone https://github.com/ScreepsOCS/screeps.modularEngine.git`  
   * via Github Desktop  
-    Click the plus sign (+) at the top left corner, click clone and select `cyberblast`, then `screeps.modularEngine`.  
+    Click the plus sign (+) at the top left corner, click clone and select `ScreepsOCS`, then `screeps.modularEngine`.  
 
 4. Install dependencies after changing directory into the newly cloned work area  
   `cd screeps.modularEngine`  
