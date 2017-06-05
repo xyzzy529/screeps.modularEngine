@@ -1,3 +1,6 @@
+/* Credits go to https://github.com/gdborton/screeps-profiler */ 
+/* Thank you Gary!                                            */
+
 let usedOnStart = 0;
 let enabled = false;
 let depth = 0;

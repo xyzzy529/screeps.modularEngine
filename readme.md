@@ -1,26 +1,41 @@
 
 # ScreepsOCS/screeps.modularEngine
 
-### Intro
+[![slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://screeps.slack.com/messages/ocs/)  
 
-Hi folks, 
+This document:  
+[Intro](#intro)  
+[Installation](#installation)  
+[Usage](#usage)  
+[Known existing features](#features)  
+[About OCS](#ocs)  
+Other links:  
+[Rough implementation schedule](https://github.com/ScreepsOCS/screeps.modularEngine/issues/3)
 
-this is an idea I came across: a fully modular screeps AI. Where every functionality is contained in exchangeable extensions. 
-Core is this one, containing grunt deployment & base engine (lazy raw memory partitions, loop phases, feature processing). 
+## <a name="intro"></a>Intro
 
-Anything else needs to be developed in additional *features*. 
-Each feature should be contained in a separate repository. This way, everyone can combine features as they like to. For example, there could be different alternative (replacing) navigation features, or different tower features, private features, anything... 
+The screeps.modularEngine repository implements the core part for a new AI for [Screeps](https://screeps.com/).  
+Part of this engine are mainly:
+* Grunt Screeps deployment
+* lazy raw memory partitions
+* loop phases
+* feature extension model
+* Log system
+* "Kind of" events
+* Profiler
+
+Everything else needs to be developed in additional *features*. 
+
+Each feature should be contained in a separate repository. This way, everyone can combine features at pleasure.  
+
+While there is a notion which features may be required (=> [rough implementation schedule](https://github.com/ScreepsOCS/screeps.modularEngine/issues/3)), it's absolutely open and up to the community what may exist eventually. There may be different alternative (replacing) navigation features, or different tower features, private features, anything... 
 
 Every feature needs to be placed within the features folder (clone to /src/features or create a new sub directory and init a new git repository).
 To "use" a feature, you need to register it to your individual main.js (see example.main.js). 
 
-There is a sample feature included in this repository to explain how features work (and I'm already working on real some, in separate repos). 
+There is a sample feature included in this repository to explain how features work. 
 
-Much work ahead ^^ => [rough implementation schedule](https://github.com/ScreepsOCS/screeps.modularEngine/issues/3)
-
-Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
-
-### Installation
+## <a name="installation"></a>Installation
 
 1. Install Node  
   https://nodejs.org/en/
@@ -47,7 +62,7 @@ Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it o
 
 7. Clone features into /src/features and edit main.js code
 
-### Usage
+## <a name="usage"></a>Usage
 
 Commands
   * to build (without deployment)  
@@ -58,12 +73,16 @@ Commands
   * commit & push all features  
   `grunt pushAll:"<commit message>"`
 
-## Known existing features
+## <a name="features"></a>Known existing features
 
 * [ScreepsOCS/screeps.feature.foundation](https://github.com/ScreepsOCS/screeps.feature.foundation)  
   Basic foundation to get screeps up & running.  
   Analyzes rooms, flags & creeps & triggers events.  
   Serves as basis for higher features.  
+
+* [ScreepsOCS/screeps.feature.worker](https://github.com/ScreepsOCS/screeps.feature.worker)
+  Basic worker feature.  
+  Build, repair, fortify, support hauler/upgrader
 
 * [cyberblast/screeps.feature.basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
   Providing simple heal, (urgent) repair & attack functionality
@@ -72,7 +91,10 @@ Commands
   Utilizing PathFinder. Caching costMatrices, cross room paths & local paths.  
   Providing some additional room features (isHighwayRoom, isSKRoom etc...)
 
-* [ScreepsOCS/screeps.feature.worker](https://github.com/ScreepsOCS/screeps.feature.worker)
-  Basic worker feature.  
-  Build, repair, fortify, support hauler/upgrader
+## <a name="ocs"></a>About OCS
 
+The Open Collaboration Society (OCS) is a github organization, focused on development for the game [Screeps](https://screeps.com/), "the world's first MMO sandbox game for programmers".  
+For further clarification: we are not an ingame alliance, but a loose bunch of players who like the idea to combine efforts and create something by working on it together. 
+
+If you are interested in participation you are welcome to simply do so. You may fork or clone our repos and create a pull request and take part in our issues or slack channel.  
+If you are interested in joining our group please send an email request to [cyberblast](mailto://ocs@cyberblast.org).
