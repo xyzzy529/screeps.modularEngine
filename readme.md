@@ -17,9 +17,9 @@ Other links:
 The screeps.modularEngine repository implements the core part for a new AI for [Screeps](https://screeps.com/).  
 Part of this engine are mainly:
 * Grunt Screeps deployment
-* lazy raw memory partitions
-* loop phases
-* feature extension model
+* Lazy raw memory partitions
+* Loop phases
+* Feature extension model
 * Log system
 * "Kind of" events
 * Profiler
@@ -70,7 +70,7 @@ Commands
   * to build & deploy  
   `grunt deploy [--branch=<customBranch>]`  
   Default branch is defined in screeps.json
-  * commit & push all features  
+  * commit & push to all feature repos  
   `grunt pushAll:"<commit message>"`
 
 ## <a name="features"></a>Known existing features
