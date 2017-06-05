@@ -16,7 +16,7 @@ To "use" a feature, you need to register it to your individual main.js (see exam
 
 There is a sample feature included in this repository to explain how features work (and I'm already working on real some, in separate repos). 
 
-Much work ahead ^^
+Much work ahead ^^ => [rough implementation schedule](https://github.com/ScreepsOCS/screeps.modularEngine/issues/3)
 
 Please feel free to [drop me a line](mailto:ocs@cyberblast.org) if you like it or have a question about it, I'm happy about every feedback! :) 
 
@@ -71,3 +71,8 @@ Commands
 * [cyberblast/screeps.feature.navigation](https://github.com/cyberblast/screeps.feature.navigation)  
   Utilizing PathFinder. Caching costMatrices, cross room paths & local paths.  
   Providing some additional room features (isHighwayRoom, isSKRoom etc...)
+
+* [ScreepsOCS/screeps.feature.worker](https://github.com/ScreepsOCS/screeps.feature.worker)
+  Basic worker feature.  
+  Build, repair, fortify, support hauler/upgrader
+
