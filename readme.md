@@ -76,18 +76,22 @@ Commands
 ## <a name="features"></a>Known existing features
 
 * [ScreepsOCS/screeps.feature.foundation](https://github.com/ScreepsOCS/screeps.feature.foundation)  
+  Status: *TESTING*  
   Basic foundation to get screeps up & running.  
   Analyzes rooms, flags & creeps & triggers events.  
   Serves as basis for higher features.  
 
-* [ScreepsOCS/screeps.feature.worker](https://github.com/ScreepsOCS/screeps.feature.worker)
+* [ScreepsOCS/screeps.feature.worker](https://github.com/ScreepsOCS/screeps.feature.worker)  
+  Status: *PLANNING/DEVELOPMENT*  
   Basic worker feature.  
   Build, repair, fortify, support hauler/upgrader
 
 * [cyberblast/screeps.feature.basicTower](https://github.com/cyberblast/screeps.feature.basicTower)  
+  Status: *TESTING*  
   Providing simple heal, (urgent) repair & attack functionality
 
 * [cyberblast/screeps.feature.navigation](https://github.com/cyberblast/screeps.feature.navigation)  
+  Status: *TESTING*  
   Utilizing PathFinder. Caching costMatrices, cross room paths & local paths.  
   Providing some additional room features (isHighwayRoom, isSKRoom etc...)
 
