@@ -96,5 +96,8 @@ Commands
 The Open Collaboration Society (OCS) is a github organization, focused on development for the game [Screeps](https://screeps.com/), "the world's first MMO sandbox game for programmers".  
 For further clarification: we are not an ingame alliance, but a loose bunch of players who like the idea to combine efforts and create something by working on it together. 
 
-If you are interested in participation you are welcome to simply do so. You may fork or clone our repos and create a pull request and take part in our issues or slack channel.  
+If you are interested in participation you are welcome to simply do so.  
+You may fork or clone our repos and create a pull request and take part in our issues or slack channel.  
+Please note our [contributor license](https://raw.githubusercontent.com/ScreepsOCS/screeps.modularEngine/dev/CONTRIBUTING.txt)!
+
 If you are interested in joining our group please send an email request to [cyberblast](mailto://ocs@cyberblast.org).
