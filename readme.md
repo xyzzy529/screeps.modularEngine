@@ -3,7 +3,7 @@
 
 [![slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://screeps.slack.com/messages/ocs/)  
 
-<img align="right" src="https://avatars3.githubusercontent.com/u/22120683?v=3&u=c0f5bfee9881753f12887adb1d473e1c07bd0457&s=400">
+<img align="right" title="Open Collaboration Society" src="https://avatars3.githubusercontent.com/u/22120683?v=3&u=c0f5bfee9881753f12887adb1d473e1c07bd0457&s=400">
 
 This document:  
 [Intro](#intro)  
